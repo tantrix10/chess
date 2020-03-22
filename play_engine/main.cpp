@@ -38,7 +38,8 @@ class board
 	Square square[8][8];
 	int move_num = 0;
 	Colour turn = wh;
-	std::string png = "game jamie vs jamie, will extend this to generate pgn "
+	std::string png = "game jamie vs jamie, will extend this to generate pgn ";
+	Piece total; //I want to keep track of all pieces on the board so I can generate all availible moves
 
 public:
 	void set_board(){
@@ -77,34 +78,43 @@ public:
 
 	void print_board(){
 		for (int i = 0; i < 8; ++i){
+			if (i == 0)
+			{
+				std::cout << "---------------------------------------------------------"<<std::endl ;
+				
+			}
 			for (int j = 0; j < 8; ++j ){
-
+			if (j == 0)
+			{
+				std::cout << "|" ;
+				
+			}
 			Piece v = square[i][j].get_type();
 			switch(v){
 				case k:
-				std::cout << "  King  ";
+				std::cout << " King |";
 				break;
 				case q:
-				std::cout << " Queen  " ;
+				std::cout << "Queen |" ;
 				break;
 				case r:
-				std::cout << "  Rook  ";
+				std::cout << " Rook |";
 				break;
 				case n:
-				std::cout << " Knight " ;
+				std::cout << "Knight|" ;
 				break;
 				case b:
-				std::cout << " Bishop ";
+				std::cout << "Bishop|";
 				break;
 				case p:
-				std::cout << "  Pawn  " ;
+				std::cout << " Pawn |" ;
 				break;
 				case e:
-				std::cout << "   -    " ;
+				std::cout << "  +   |" ;
 				break;
 				}
 			}
-			std::cout<<"" <<std::endl;
+			std::cout<<std::endl<<"---------------------------------------------------------" <<std::endl;
 		}
 		std::cout<<"" <<std::endl;
 	};
@@ -115,8 +125,16 @@ public:
 		square[x1][y1].set(e, em, x1, y1);
 		square[x2][y2].set(temp, col, x2, y2);
 	}
-//board();
 
+	int notation_to_coord(std::string moves){
+		//this is so I can type in regular notation for moves
+		return 0;
+	}
+
+	std::string coord_to_notation(int x1, int x2, int y1, int y2){
+		//this is so I can generate pgns of games coming from engine
+		return "out";
+	}
 };
 
 
@@ -125,6 +143,9 @@ int main(){
 	b.set_board();
 	b.print_board();
 	b.move(6,4,4,4);
+	b.print_board();
+	b.move(1,3,4,4);
+	b.move(7,5,6,5);
 	b.print_board();
 	return 0;
 }
