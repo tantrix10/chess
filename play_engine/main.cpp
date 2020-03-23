@@ -7,13 +7,12 @@ enum Colour {bl, wh, em};
 
 class Square
 {
+
+public:
 	Piece piece;
 	Colour colour;
 	int x, y;
 
-public:
-	Piece get_type(){return piece;}
-	Colour get_colour(){return colour;}
 	void set(Piece type, Colour col, int x1, int y1){
 		piece = type; 
 		colour = col;
@@ -89,7 +88,7 @@ public:
 				std::cout << "|" ;
 				
 			}
-			Piece v = square[i][j].get_type();
+			Piece v = square[i][j].piece;
 			switch(v){
 				case k:
 				std::cout << " King |";
@@ -120,8 +119,8 @@ public:
 	};
 
 	void move(int x1, int x2, int y1, int y2){
-		Piece temp = square[x1][y1].get_type();
-		Colour col = square[x1][y1].get_colour();
+		Piece temp = square[x1][y1].piece;
+		Colour col = square[x1][y1].colour;
 		square[x1][y1].set(e, em, x1, y1);
 		square[x2][y2].set(temp, col, x2, y2);
 	}
