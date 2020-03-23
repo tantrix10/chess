@@ -1,8 +1,8 @@
 #include <iostream>
 
 
-enum Piece {k, q, r, n, b, p, e};
-enum Colour {bl, wh, em};
+enum Piece {k, q, r, n, b, p, e_p};
+enum Colour {bl, wh, e_c};
 
 
 class Square
@@ -20,8 +20,8 @@ public:
 		y = y1;}
 
 	Square(){
-		piece = e;
-		colour = em;
+		piece = e_p;
+		colour = e_c;
 		x = -1;
 		y = -1;
 	};
@@ -52,7 +52,7 @@ public:
 		{
 			for (int j = 0; j < 8; ++j)
 			{
-				square[i][j].set(e, em, i, j);
+				square[i][j].set(e_p, e_c, i, j);
 			}
 		}
 		square[0][0].set(r,wh,0,0);
@@ -108,7 +108,7 @@ public:
 				case p:
 				std::cout << " Pawn |" ;
 				break;
-				case e:
+				case e_p:
 				std::cout << "  +   |" ;
 				break;
 				}
@@ -121,7 +121,7 @@ public:
 	void move(int x1, int x2, int y1, int y2){
 		Piece temp = square[x1][y1].piece;
 		Colour col = square[x1][y1].colour;
-		square[x1][y1].set(e, em, x1, y1);
+		square[x1][y1].set(e_p, e_c, x1, y1);
 		square[x2][y2].set(temp, col, x2, y2);
 	}
 
@@ -145,6 +145,9 @@ int main(){
 	b.print_board();
 	b.move(1,3,4,4);
 	b.move(7,5,6,5);
+	b.print_board();
+	b.move(0,2,6,5);
+	b.move(5,3,5,4);
 	b.print_board();
 	return 0;
 }
