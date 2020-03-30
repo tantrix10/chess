@@ -1,6 +1,8 @@
 #include <iostream>
-
-
+#include <vector>
+#include <string>
+#include <cstdlib>
+#include <fstream>
 enum Piece {k, q, r, n, b, p, e_p};
 enum Colour {bl, wh, e_c};
 
@@ -36,18 +38,55 @@ class board
 { 
 	Square square[8][8];
 	int move_num = 0;
-	Colour turn = wh;
-	std::string png = "game jamie vs jamie, will extend this to generate pgn ";
+	std::string pgn = "game jamie vs jamie, will extend this to generate pgn ";
 	Piece total; //I want to keep track of all pieces on the board so I can generate all availible moves
+	bool game_state = true;
 
 public:
+	void play(){
+		std::string mv;
+		
+		std::string player1;
+		std::string player2;
+		std::cout<<"Enter player1 and player2" << std::endl; 
+		std::cout<<"player 1:";
+		std::cin >> player1;
+		std::cout<<"player 2:";
+		std::cin >> player2;
+		print_board();
+		while(game_state){
+			//very simple play system
+
+
+			
+			std::string colmove;
+			if(move_num % 2 ==0){colmove = "white";}
+			else{colmove = "black";}
+			std::cout<< "It is " << colmove << " to move. Enter move: ";
+			// format shoudl be "square1-square2" for exmaple "e1-e5"
+			std::cin >> mv;
+			std::vector<int> v = notation_to_coord(mv);
+			move(v);
+			print_board();
+			if(move_num == 3){game_state=false;}
+
+		}
+
+	  std::ofstream myfile; //really I want the moves to go onto new lines but I'll do that later
+	  myfile.open (player1 + "_vs_" + player2 + "_pgn.txt");
+	  myfile << pgn << std::endl;
+	  myfile.close();
+	}
+
 	void set_board(){
+		//set the pawns
 		for (int i = 0; i < 8; i+=1){
 	
 			square[6][i].set(p, bl, 6, i);
 			square[1][i].set(p, wh, 1, i);
 
 		}
+		//set the empty squares
 		for (int i = 2; i < 6; ++i)
 		{
 			for (int j = 0; j < 8; ++j)
@@ -55,6 +94,8 @@ public:
 				square[i][j].set(e_p, e_c, i, j);
 			}
 		}
+
+		// set the non-pawn and empty peices 
 		square[0][0].set(r,wh,0,0);
 		square[0][1].set(n,wh,0,1);
 		square[0][2].set(b,wh,0,2);
@@ -73,9 +114,12 @@ public:
 		square[7][5].set(b,wh,7,5);
 		square[7][6].set(n,wh,7,6);
 		square[7][7].set(r,wh,7,7);
+
+
 	};
 
 	void print_board(){
+		//simple print, just itterate over square and print its value
 		for (int i = 0; i < 8; ++i){
 			if (i == 0)
 			{
@@ -118,36 +162,53 @@ public:
 		std::cout<<"" <<std::endl;
 	};
 
-	void move(int x1, int x2, int y1, int y2){
-		Piece temp = square[x1][y1].piece;
-		Colour col = square[x1][y1].colour;
-		square[x1][y1].set(e_p, e_c, x1, y1);
-		square[x2][y2].set(temp, col, x2, y2);
+	void move(std::vector<int> v){
+		// so far this just moves a piece from one square to another
+		// need to add checks for legalaity, checks etc 
+		Piece temp = square[v[1]][v[0]].piece;
+		Colour col = square[v[1]][v[0]].colour;
+
+		square[v[1]][v[0]].set(e_p, e_c, v[1], v[0]);
+		square[v[3]][v[2]].set(temp, col, v[3], v[2]);
+		move_num++;
 	}
 
-	int notation_to_coord(std::string moves){
+	std::vector<int> notation_to_coord(std::string move){
 		//this is so I can type in regular notation for moves
-		return 0;
+		/* chess notation is such that you actually only need the square you're arriving on,
+		unless there's an ambiguity. I should implement this for easier pgn implementation
+		*/
+		pgn += std::to_string(move_num) + ". " + move + " " ;
+		std::vector<int> out;
+		int x1 = move[0];
+		int y1 = move[1]- '0';
+		int x2 = move[3];
+		int y2 = move[4]- '0';
+		
+		out.push_back( -97 + x1  );
+		out.push_back(  8  - y1  );
+		out.push_back( -97 + x2  );
+		out.push_back(  8  - y2  );
+		return out;
 	}
 
-	std::string coord_to_notation(int x1, int x2, int y1, int y2){
-		//this is so I can generate pgns of games coming from engine
-		return "out";
-	}
+
+
 };
 
 
 int main(){
 	board b;
 	b.set_board();
-	b.print_board();
-	b.move(6,4,4,4);
-	b.print_board();
-	b.move(1,3,4,4);
-	b.move(7,5,6,5);
-	b.print_board();
-	b.move(0,2,6,5);
-	b.move(5,3,5,4);
-	b.print_board();
+	b.play();
+	// b.print_board();
+	// b.move(6,4,4,4);
+	// b.print_board();
+	// b.move(1,3,4,4);
+	// b.move(7,5,6,5);
+	// b.print_board();
+	// b.move(0,2,6,5);
+	// b.move(5,3,5,4);
+	// b.print_board();
 	return 0;
 }
