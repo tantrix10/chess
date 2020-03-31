@@ -134,6 +134,20 @@ public:
 		square[7][6].set(n,wh,7,6);
 		square[7][7].set(r,wh,7,7);
 
+		check_moves();
+		
+
+	};
+
+	void check_moves(){
+		// there shoudl be a more efficient way to do this. 
+		/*
+		I can manually set possible moves when setting the board
+		after that, I would only need to check straight and diag lines from that piece
+		plus the night moves.
+
+
+		*/
 		for (int i = 0; i < 8; ++i)
 		{
 			for (int j = 0; j < 8; ++j)
@@ -141,7 +155,6 @@ public:
 				valid_moves(i, j);
 			}
 		}
-
 	};
 
 	void print_board(){
@@ -191,11 +204,11 @@ public:
 	void print_pos(std::vector<int> v){
 		//print out all possible moves for a given square
 		std::vector<std::string> moves = square[v[1]][v[0]].possible_moves;
-
+		std::cout<<"Possible moves: "; 
 		for (auto i = moves.begin(); i != moves.end(); ++i){
-    		std::cout << *i << ' ';
+    		std::cout <<*i << ' ';
 		}
-		std::cout<<std::endl;
+		std::cout<<std::endl<<std::endl;
 	}
 
 
@@ -208,7 +221,7 @@ public:
 		square[v[1]][v[0]].set(e_p, e_c, v[1], v[0]);
 		square[v[3]][v[2]].set(temp, col, v[3], v[2]);
 		move_num++;
-		valid_moves(v[3], v[2]);
+		check_moves();
 	}
 
 	std::vector<int> notation_to_coord(std::string move){
@@ -264,6 +277,13 @@ public:
 		Colour col = square[x][y].colour;
 		std::vector<std::string> out;
 		switch(pe){
+
+				case e_p:
+				//not sure why this is being pushed for pawn moves, need to check that
+				out.push_back("that's an empty square, nothing to move here!");
+				break;
+
+
 				case k:
 				//need to add itterating over other possible moves to look for moving into checks
 				//also need to add a castling move (which means tracking if the king has moved)
@@ -278,9 +298,64 @@ public:
 				break;
 
 				case r:
-				
-				out.push_back("rook not yet programmed");
+				{
+					//out.push_back("rook not yet programmed");
+					int i = 1;
+					while(x-i>=0){
+						
+						if(square[x-i][y].piece == e_p){
+							out.push_back(coord_to_notation(x-i,y));
+						}
+						else if(square[x-i][y].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-i,y));
+							break;
+						}
 
+						i++;
+					}
+
+					i = 1;
+					while(x+i < 8){
+						
+						if(square[x+i][y].piece == e_p){
+							out.push_back(coord_to_notation(x+i,y));
+						}
+						else if(square[x+i][y].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+i,y));
+							break;
+						}
+
+						i++;
+					}
+					i = 1;
+					while(y-i>=0){
+						
+						if(square[x][y-i].piece == e_p){
+							out.push_back(coord_to_notation(x,y-i));
+						}
+						else if(square[x][y-i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x,y-i));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(y+i < 8){
+						
+						if(square[x][y+i].piece == e_p){
+							out.push_back(coord_to_notation(x,y+i));
+						}
+						else if(square[x][y+i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x,y+i));
+							break;
+						}
+
+						i++;
+					}
+
+				};
 				break;
 
 				case n:
@@ -330,10 +405,7 @@ public:
 					break;
 				}
 
-				case e_p:
-				//not sure why this is being pushed for pawn moves, need to check that
-				out.push_back("that's an empty square, nothing to move here!");
-				break;
+				
 
 		};
 
