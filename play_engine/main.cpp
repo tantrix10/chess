@@ -3,6 +3,9 @@
 #include <string>
 #include <cstdlib>
 #include <fstream>
+
+
+//enum declare the pieces and colours
 enum Piece {k, q, r, n, b, p, e_p};
 enum Colour {bl, wh, e_c};
 
@@ -11,22 +14,30 @@ class Square
 {
 
 public:
+	//a square has a peice, a colour and coords. 
 	Piece piece;
 	Colour colour;
 	int x, y;
+	std::vector<std::string> possible_moves;
+
 
 	void set(Piece type, Colour col, int x1, int y1){
+		//using a set function just to make moving easier
 		piece = type; 
 		colour = col;
 		x = x1;
-		y = y1;}
+		y = y1;
+	};
 
 	Square(){
+		//instaniate each square as empty and on 0,0 square
 		piece = e_p;
 		colour = e_c;
-		x = -1;
-		y = -1;
+		x = 0;
+		y = 0;
 	};
+
+
 };
 
 
@@ -171,6 +182,7 @@ public:
 		square[v[1]][v[0]].set(e_p, e_c, v[1], v[0]);
 		square[v[3]][v[2]].set(temp, col, v[3], v[2]);
 		move_num++;
+		valid_moves(v[3], v[2]);
 	}
 
 	std::vector<int> notation_to_coord(std::string move){
@@ -178,6 +190,20 @@ public:
 		/* chess notation is such that you actually only need the square you're arriving on,
 		unless there's an ambiguity. I should implement this for easier pgn implementation
 		*/
+		if(move.length()==2){
+
+		std::vector<int> out;
+		int x1 = move[0];
+		int y1 = move[1]- '0';
+
+		
+		out.push_back( -97 + x1  ); //string to int char going from a-h goes from 97-101
+		out.push_back(  8  - y1  ); //just have to flip the coords as we count a1 on a chess board bottom left
+
+		return out;
+
+		}
+		
 		pgn += std::to_string(move_num) + ". " + move + " " ;
 		std::vector<int> out;
 		int x1 = move[0];
@@ -185,13 +211,103 @@ public:
 		int x2 = move[3];
 		int y2 = move[4]- '0';
 		
-		out.push_back( -97 + x1  );
-		out.push_back(  8  - y1  );
+		out.push_back( -97 + x1  ); //string to int char going from a-h goes from 97-101
+		out.push_back(  8  - y1  ); //just have to flip the coords as we count a1 on a chess board bottom left
 		out.push_back( -97 + x2  );
 		out.push_back(  8  - y2  );
 		return out;
 	}
 
+
+
+
+	std::string coord_to_notation(int x, int y){
+		//this will take in a coord and generate the notation, for printing possible moves
+		std::string out;
+		std::string comp = "abcdefgh";
+		out += comp[y];
+		out += std::to_string(x + 1);
+		return out;
+
+	}
+
+	void valid_moves(int x, int y){
+		//just for testing I will do this with the coords, but I will make this better by using pointers to square objects later
+		//it is important for me to generate a list of all possible moves for the game engine I want to make later
+		Piece pe = square[x][y].piece;
+		Colour col = square[x][y].colour;
+		std::vector<std::string> out;
+		switch(pe){
+				case k:
+				//need to add itterating over other possible moves to look for moving into checks
+				//also need to add a castling move (which means tracking if the king has moved)
+
+				break;
+
+				case q:
+				std::cout << "Queen " ;
+				break;
+
+				case r:
+				std::cout << " Rook ";
+				break;
+
+				case n:
+				std::cout << "Knight" ;
+				break;
+
+				case b:
+				std::cout << "Bishop";
+				break;
+
+				case p:
+				//n.b. here I still need to add the en-passent rule, but I need to add that state to the pawn peice and actually have a proper square swtich function
+				switch(col){
+					case wh:
+						if (x==6 and square[x-1][y].piece == e_p and square[x-2][y].piece == e_p){
+							out.push_back(coord_to_notation(x,y-2));
+							
+						}
+						if (square[x-1][y].piece == e_p and x-1 >= 0 ){
+							out.push_back(coord_to_notation(x,y+1));
+						}
+						if (square[x-1][y-1].colour == bl and x-1 >=0 and y-1 >=0){
+							out.push_back(coord_to_notation(x-1,y-1));
+						}
+						if (square[x-1][y+1].colour == bl and x-1 >=0 and y+1 < 8){
+						out.push_back(coord_to_notation(x-1,y+1));
+						}
+					break;
+					case bl:
+						if (x==1 and square[x+1][y].piece == e_p and square[x+2][y].piece == e_p){
+							out.push_back(coord_to_notation(x,y+2));
+							
+						}
+						if (square[x+1][y].piece == e_p and x+1 < 8 ){
+							out.push_back(coord_to_notation(x,y+1));
+						}
+						if (square[x+1][y-1].colour == wh and x+1 < 8 and y-1 >= 0){
+							out.push_back(coord_to_notation(x+1,y-1));
+						}
+						if (square[x+1][y+1].colour == wh and x-1 >=0 and y+1 < 8){
+						out.push_back(coord_to_notation(x+1,y+1));
+						}
+					break;
+				}
+
+				case e_p:
+				out.push_back("that's an empty square, nothing to move here!")
+				break;
+
+
+
+
+
+		};
+
+
+		square[x][y].possible_moves = out;
+	};
 
 
 };
@@ -201,14 +317,5 @@ int main(){
 	board b;
 	b.set_board();
 	b.play();
-	// b.print_board();
-	// b.move(6,4,4,4);
-	// b.print_board();
-	// b.move(1,3,4,4);
-	// b.move(7,5,6,5);
-	// b.print_board();
-	// b.move(0,2,6,5);
-	// b.move(5,3,5,4);
-	// b.print_board();
 	return 0;
 }
