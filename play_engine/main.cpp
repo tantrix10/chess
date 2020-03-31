@@ -27,6 +27,7 @@ public:
 		colour = col;
 		x = x1;
 		y = y1;
+
 	};
 
 	Square(){
@@ -77,10 +78,17 @@ public:
 			// format shoudl be "square1-square2" for exmaple "e1-e5"
 			std::cin >> mv;
 			std::vector<int> v = notation_to_coord(mv);
+
+			if(mv.length() == 2){//if you querry a single square it will list the possible moves from that square
+				//std::cout<< mv << " " << v[0] << v[1] <<std::endl;
+				print_pos(v);
+				//std::cout << std::endl;
+			}
+			if(mv.length() == 5){
 			move(v);
 			print_board();
 			if(move_num == 3){game_state=false;}
-
+			}
 		}
 
 	  std::ofstream myfile; //really I want the moves to go onto new lines but I'll do that later
@@ -126,6 +134,13 @@ public:
 		square[7][6].set(n,wh,7,6);
 		square[7][7].set(r,wh,7,7);
 
+		for (int i = 0; i < 8; ++i)
+		{
+			for (int j = 0; j < 8; ++j)
+			{
+				valid_moves(i, j);
+			}
+		}
 
 	};
 
@@ -172,6 +187,16 @@ public:
 		}
 		std::cout<<"" <<std::endl;
 	};
+
+	void print_pos(std::vector<int> v){
+		std::vector<std::string> moves = square[v[1]][v[0]].possible_moves;
+
+		for (auto i = moves.begin(); i != moves.end(); ++i){
+    		std::cout << *i << ' ';
+		}
+		std::cout<<std::endl;
+	}
+
 
 	void move(std::vector<int> v){
 		// so far this just moves a piece from one square to another
@@ -226,7 +251,7 @@ public:
 		std::string out;
 		std::string comp = "abcdefgh";
 		out += comp[y];
-		out += std::to_string(x + 1);
+		out += std::to_string(8-x + 1);
 		return out;
 
 	}
@@ -241,23 +266,32 @@ public:
 				case k:
 				//need to add itterating over other possible moves to look for moving into checks
 				//also need to add a castling move (which means tracking if the king has moved)
+				out.push_back("king not yet programmed");
 
 				break;
 
 				case q:
-				std::cout << "Queen " ;
+				//std::cout << "Queen " ;
+				out.push_back("queen not yet programmed");
+
 				break;
 
 				case r:
-				std::cout << " Rook ";
+				//std::cout << " Rook ";
+				out.push_back("rook not yet programmed");
+
 				break;
 
 				case n:
-				std::cout << "Knight" ;
+				//std::cout << "Knight" ;
+				out.push_back("knight not yet programmed");
+
 				break;
 
 				case b:
-				std::cout << "Bishop";
+				//std::cout << "Bishop";
+				out.push_back("bishop not yet programmed");
+
 				break;
 
 				case p:
@@ -265,11 +299,11 @@ public:
 				switch(col){
 					case wh:
 						if (x==6 and square[x-1][y].piece == e_p and square[x-2][y].piece == e_p){
-							out.push_back(coord_to_notation(x,y-2));
+							out.push_back(coord_to_notation(x-2,y));
 							
 						}
 						if (square[x-1][y].piece == e_p and x-1 >= 0 ){
-							out.push_back(coord_to_notation(x,y+1));
+							out.push_back(coord_to_notation(x-1,y));
 						}
 						if (square[x-1][y-1].colour == bl and x-1 >=0 and y-1 >=0){
 							out.push_back(coord_to_notation(x-1,y-1));
@@ -296,12 +330,8 @@ public:
 				}
 
 				case e_p:
-				out.push_back("that's an empty square, nothing to move here!")
+				out.push_back("that's an empty square, nothing to move here!");
 				break;
-
-
-
-
 
 		};
 
