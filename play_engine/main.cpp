@@ -48,16 +48,16 @@ public:
 
 class board
 { 
-	Square square[8][8];
-	int move_num = 0;
+	Square square[8][8]; //instantiate 8x8 array of squares
+	int move_num = 0; //track move number to track whose turn it is
 	std::string pgn = "game jamie vs jamie, will extend this to generate pgn ";
 	Piece total; //I want to keep track of all pieces on the board so I can generate all availible moves
-	bool game_state = true;
+	bool game_state = true; //game state false when finished, will add termination condition too, white win/black win/draw
 
 public:
 	void play(){
 		std::string mv;
-		
+		//enter player names
 		std::string player1;
 		std::string player2;
 		std::cout<<"Enter player1 and player2" << std::endl; 
@@ -189,6 +189,7 @@ public:
 	};
 
 	void print_pos(std::vector<int> v){
+		//print out all possible moves for a given square
 		std::vector<std::string> moves = square[v[1]][v[0]].possible_moves;
 
 		for (auto i = moves.begin(); i != moves.end(); ++i){
@@ -271,25 +272,25 @@ public:
 				break;
 
 				case q:
-				//std::cout << "Queen " ;
+				
 				out.push_back("queen not yet programmed");
 
 				break;
 
 				case r:
-				//std::cout << " Rook ";
+				
 				out.push_back("rook not yet programmed");
 
 				break;
 
 				case n:
-				//std::cout << "Knight" ;
+				
 				out.push_back("knight not yet programmed");
 
 				break;
 
 				case b:
-				//std::cout << "Bishop";
+				
 				out.push_back("bishop not yet programmed");
 
 				break;
@@ -330,6 +331,7 @@ public:
 				}
 
 				case e_p:
+				//not sure why this is being pushed for pawn moves, need to check that
 				out.push_back("that's an empty square, nothing to move here!");
 				break;
 
