@@ -101,8 +101,8 @@ public:
 		//set the pawns
 		for (int i = 0; i < 8; i+=1){
 	
-			square[6][i].set(p, bl, 6, i);
-			square[1][i].set(p, wh, 1, i);
+			square[6][i].set(p, wh, 6, i);
+			square[1][i].set(p, bl, 1, i);
 
 		}
 		//set the empty squares
@@ -115,14 +115,14 @@ public:
 		}
 
 		// set the non-pawn and empty peices 
-		square[0][0].set(r,wh,0,0);
-		square[0][1].set(n,wh,0,1);
-		square[0][2].set(b,wh,0,2);
-		square[0][3].set(q,wh,0,3);
-		square[0][4].set(k,wh,0,4);
-		square[0][5].set(b,wh,0,5);
-		square[0][6].set(n,wh,0,6);
-		square[0][7].set(r,wh,0,7);
+		square[0][0].set(r,bl,0,0);
+		square[0][1].set(n,bl,0,1);
+		square[0][2].set(b,bl,0,2);
+		square[0][3].set(q,bl,0,3);
+		square[0][4].set(k,bl,0,4);
+		square[0][5].set(b,bl,0,5);
+		square[0][6].set(n,bl,0,6);
+		square[0][7].set(r,bl,0,7);
 
 		square[7][7].set(r,wh,7,7);
 		square[7][0].set(r,wh,7,0);
@@ -251,7 +251,7 @@ public:
 		std::string out;
 		std::string comp = "abcdefgh";
 		out += comp[y];
-		out += std::to_string(8-x + 1);
+		out += std::to_string(8-x );
 		return out;
 
 	}
@@ -314,11 +314,11 @@ public:
 					break;
 					case bl:
 						if (x==1 and square[x+1][y].piece == e_p and square[x+2][y].piece == e_p){
-							out.push_back(coord_to_notation(x,y+2));
+							out.push_back(coord_to_notation(x+2,y));
 							
 						}
 						if (square[x+1][y].piece == e_p and x+1 < 8 ){
-							out.push_back(coord_to_notation(x,y+1));
+							out.push_back(coord_to_notation(x+1,y));
 						}
 						if (square[x+1][y-1].colour == wh and x+1 < 8 and y-1 >= 0){
 							out.push_back(coord_to_notation(x+1,y-1));
