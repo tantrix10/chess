@@ -50,14 +50,16 @@ class board
 { 
 	Square square[8][8]; //instantiate 8x8 array of squares
 	int move_num = 0; //track move number to track whose turn it is
-	std::string pgn = "game jamie vs jamie, will extend this to generate pgn ";
-	Piece total; //I want to keep track of all pieces on the board so I can generate all availible moves
+	std::string pgn = "game pgn, will extend this to generate proper pgn  standard";
 	bool game_state = true; //game state false when finished, will add termination condition too, white win/black win/draw
 
 public:
 	void play(){
-		std::string mv;
+		std::string mv; //input move
 		//enter player names
+
+		std::string colmove; //whose move is it
+
 		std::string player1;
 		std::string player2;
 		std::cout<<"Enter player1 and player2" << std::endl; 
@@ -65,15 +67,21 @@ public:
 		std::cin >> player1;
 		std::cout<<"player 2:";
 		std::cin >> player2;
+
 		print_board();
+
 		while(game_state){
 			//very simple play system
+			//currently allows any move to be made or checking legal moves of a square
+			//tracks whose move it is
 
 
 			
-			std::string colmove;
+
+
 			if(move_num % 2 ==0){colmove = "white";}
 			else{colmove = "black";}
+
 			std::cout<< "It is " << colmove << " to move. Enter move: ";
 			// format shoudl be "square1-square2" for exmaple "e1-e5"
 			std::cin >> mv;
@@ -87,11 +95,11 @@ public:
 			if(mv.length() == 5){
 			move(v);
 			print_board();
-			if(move_num == 3){game_state=false;}
+			if(move_num == 3){game_state=false;} //terminate the game after three moves, just for testing
 			}
 		}
 
-	  std::ofstream myfile; //really I want the moves to go onto new lines but I'll do that later
+	  std::ofstream myfile; //open and print the move into an output pgn
 	  myfile.open (player1 + "_vs_" + player2 + "_pgn.txt");
 	  myfile << pgn << std::endl;
 	  myfile.close();
@@ -146,6 +154,10 @@ public:
 		after that, I would only need to check straight and diag lines from that piece
 		plus the night moves.
 
+		Also moves eminating from where the new piece went. 
+
+		Implement this after the rest is actually working, it's okay for now. 
+
 
 		*/
 		for (int i = 0; i < 8; ++i)
@@ -158,7 +170,7 @@ public:
 	};
 
 	void print_board(){
-		//simple print, just itterate over square and print its value
+		//simple print, just itterate over all squares and print its value
 		for (int i = 0; i < 8; ++i){
 			if (i == 0)
 			{
@@ -215,6 +227,9 @@ public:
 	void move(std::vector<int> v){
 		// so far this just moves a piece from one square to another
 		// need to add checks for legalaity, checks etc 
+
+		//takes in vector of length four of form y1, x1, y2, x2. 
+		//where those are the coordinates moving from and to in the actual array, not notation. 
 		Piece temp = square[v[1]][v[0]].piece;
 		Colour col = square[v[1]][v[0]].colour;
 
@@ -233,7 +248,7 @@ public:
 
 		std::vector<int> out;
 		int x1 = move[0];
-		int y1 = move[1]- '0';
+		int y1 = move[1]- '0';//bit of a hacky way to convert char to int perhaps but works for now
 
 		
 		out.push_back( -97 + x1  ); //string to int char going from a-h goes from 97-101
@@ -261,7 +276,7 @@ public:
 
 
 	std::string coord_to_notation(int x, int y){
-		//this will take in a coord and generate the notation, for printing possible moves
+		//this will take in a coordinate from the array and generate the notation
 		std::string out;
 		std::string comp = "abcdefgh";
 		out += comp[y];
@@ -273,6 +288,7 @@ public:
 	void valid_moves(int x, int y){
 		//just for testing I will do this with the coords, but I will make this better by using pointers to square objects later
 		//it is important for me to generate a list of all possible moves for the game engine I want to make later
+		//also this will be used to enforce legal moves are being made. 
 		Piece pe = square[x][y].piece;
 		Colour col = square[x][y].colour;
 		std::vector<std::string> out;
@@ -299,7 +315,8 @@ public:
 
 				case r:
 				{
-					//out.push_back("rook not yet programmed");
+					//move in each four straight directions until you encounter the edge of the board, or a piece.
+					//if that piece is of oposite colour you can take it
 					int i = 1;
 					while(x-i>=0){
 						
@@ -372,6 +389,8 @@ public:
 
 				case p:
 				//n.b. here I still need to add the en-passent rule, but I need to add that state to the pawn peice and actually have a proper square swtich function
+				//pawns are the only peices that move differently depending on colour so we need another switch case. 
+				//check if the pawn is on the 2nd/6th rank to see if it can move two squares, if not standard rules.
 				switch(col){
 					case wh:
 						if (x==6 and square[x-1][y].piece == e_p and square[x-2][y].piece == e_p){
