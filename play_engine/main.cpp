@@ -289,6 +289,8 @@ public:
 		//just for testing I will do this with the coords, but I will make this better by using pointers to square objects later
 		//it is important for me to generate a list of all possible moves for the game engine I want to make later
 		//also this will be used to enforce legal moves are being made. 
+
+		//to-do: just make a little check valid move function, and loop over it, much cleaner. 
 		Piece pe = square[x][y].piece;
 		Colour col = square[x][y].colour;
 		std::vector<std::string> out;
@@ -309,19 +311,84 @@ public:
 
 				case q:
 				
-				out.push_back("queen not yet programmed");
-
-				break;
-
-				case r:
+				//this is simply a combination of rook and bishop movements 
 				{
-					//move in each four straight directions until you encounter the edge of the board, or a piece.
+					//move in each four diagonal directions until you encounter the edge of the board, or a piece.
 					//if that piece is of oposite colour you can take it
 					int i = 1;
+					while(x-i>= 0 and y-i >= 0){
+						
+						if(square[x-i][y-i].piece == e_p){
+							out.push_back(coord_to_notation(x-i,y-i));
+						}
+						else if(square[x-i][y-i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x-i][y-i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-i,y-i));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(x+i < 8 and y+i < 8){
+						
+						if(square[x+i][y+i].piece == e_p){
+							out.push_back(coord_to_notation(x+i,y+i));
+						}
+						else if(square[x-i][y+i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x+i][y+i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+i,y+i));
+							break;
+						}
+
+						i++;
+					}
+					i = 1;
+					while(y-i >= 0 and x+i < 8){
+						
+						if(square[x+i][y-i].piece == e_p){
+							out.push_back(coord_to_notation(x+i,y-i));
+						}
+						else if(square[x+i][y-i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x+i][y-i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+i,y-i));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(y+i < 8 and x-i >= 0){
+						
+						if(square[x-i][y+i].piece == e_p){
+							out.push_back(coord_to_notation(x-i,y+i));
+						}
+						else if(square[x-i][y+i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x-i][y+i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-i,y+i));
+							break;
+						}
+
+						i++;
+					}
+					i = 1;
 					while(x-i>=0){
 						
 						if(square[x-i][y].piece == e_p){
 							out.push_back(coord_to_notation(x-i,y));
+						}
+						else if(square[x-i][y].colour == square[x][y].colour){
+							break;
 						}
 						else if(square[x-i][y].colour != square[x][y].colour){
 							out.push_back(coord_to_notation(x-i,y));
@@ -337,6 +404,9 @@ public:
 						if(square[x+i][y].piece == e_p){
 							out.push_back(coord_to_notation(x+i,y));
 						}
+						else if(square[x+i][y].colour == square[x][y].colour){
+							break;
+						}
 						else if(square[x+i][y].colour != square[x][y].colour){
 							out.push_back(coord_to_notation(x+i,y));
 							break;
@@ -349,6 +419,9 @@ public:
 						
 						if(square[x][y-i].piece == e_p){
 							out.push_back(coord_to_notation(x,y-i));
+						}
+						else if(square[x][y-i].colour == square[x][y].colour){
+							break;
 						}
 						else if(square[x][y-i].colour != square[x][y].colour){
 							out.push_back(coord_to_notation(x,y-i));
@@ -364,6 +437,84 @@ public:
 						if(square[x][y+i].piece == e_p){
 							out.push_back(coord_to_notation(x,y+i));
 						}
+						else if(square[x][y+i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x][y+i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x,y+i));
+							break;
+						}
+
+						i++;
+					}
+
+				};
+
+				break;
+
+				case r:
+				{
+					//move in each four straight directions until you encounter the edge of the board, or a piece.
+					//if that piece is of oposite colour you can take it
+					int i = 1;
+					while(x-i>=0){
+						
+						if(square[x-i][y].piece == e_p){
+							out.push_back(coord_to_notation(x-i,y));
+						}
+						else if(square[x-i][y].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x-i][y].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-i,y));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(x+i < 8){
+						
+						if(square[x+i][y].piece == e_p){
+							out.push_back(coord_to_notation(x+i,y));
+						}
+						else if(square[x+i][y].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x+i][y].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+i,y));
+							break;
+						}
+
+						i++;
+					}
+					i = 1;
+					while(y-i>=0){
+						
+						if(square[x][y-i].piece == e_p){
+							out.push_back(coord_to_notation(x,y-i));
+						}
+						else if(square[x][y-i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x][y-i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x,y-i));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(y+i < 8){
+						
+						if(square[x][y+i].piece == e_p){
+							out.push_back(coord_to_notation(x,y+i));
+						}
+						else if(square[x][y+i].colour == square[x][y].colour){
+							break;
+						}
 						else if(square[x][y+i].colour != square[x][y].colour){
 							out.push_back(coord_to_notation(x,y+i));
 							break;
@@ -377,13 +528,178 @@ public:
 
 				case n:
 				
-				out.push_back("knight not yet programmed");
+				//first check case of knight going forward (again there's a better way to do this, but will do that later (I really hate this one haha))
+				//yeah, when I tidy this up it's very simple to check the combinations of x +- (2,1), y +- (2,1)
+				if(x+2 < 8){
+					if(y+1 < 8){
+
+						if(square[x+2][y+1].piece == e_p){
+							out.push_back(coord_to_notation(x+2,y+1));
+						}
+						else if(square[x+2][y+1].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+2,y+1));
+							
+						}
+					}
+					if(y-1 > 0){
+
+						if(square[x+2][y-1].piece == e_p){
+							out.push_back(coord_to_notation(x+2,y-1));
+						}
+						else if(square[x+2][y-1].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+2,y-1));
+							
+						}
+					}
+				}
+
+				if(x-2 > 0){
+					if(y+1 < 8){
+
+						if(square[x-2][y+1].piece == e_p){
+							out.push_back(coord_to_notation(x-2,y+1));
+						}
+						else if(square[x-2][y+1].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-2,y+1));
+							
+						}
+					}
+					if(y-1 >= 0){
+
+						if(square[x-2][y-1].piece == e_p){
+							out.push_back(coord_to_notation(x-2,y-1));
+						}
+						else if(square[x-2][y-1].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-2,y-1));
+							
+						}
+					}
+				}
+				// this deals with the knight moving forwards or backwards now, now to deal with moving sideways first
+
+
+				if(y+2 < 8){
+					if(x+1 < 8){
+
+						if(square[x+1][y+2].piece == e_p){
+							out.push_back(coord_to_notation(x+1,y+2));
+						}
+						else if(square[x+1][y+2].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+1,y+2));
+							
+						}
+					}
+					if(x-1 > 0){
+
+						if(square[x-1][y+2].piece == e_p){
+							out.push_back(coord_to_notation(x-1,y+2));
+						}
+						else if(square[x-1][y+2].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-1,y+2));
+							
+						}
+					}
+				}
+
+				if(y-2 > 0){
+					if(x+1 < 8){
+
+						if(square[x+1][y-2].piece == e_p){
+							out.push_back(coord_to_notation(x+1,y-2));
+						}
+						else if(square[x+1][y-2].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+1,y-2));
+							
+						}
+					}
+					if(x-1 >= 0){
+
+						if(square[x-1][y-2].piece == e_p){
+							out.push_back(coord_to_notation(x-1,y-2));
+						}
+						else if(square[x-1][y-2].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-1,y-2));
+							
+						}
+					}
+				}
+
 
 				break;
 
 				case b:
 				
-				out.push_back("bishop not yet programmed");
+				{
+					//move in each four diagonal directions until you encounter the edge of the board, or a piece.
+					//if that piece is of oposite colour you can take it
+					int i = 1;
+					while(x-i>= 0 and y-i >= 0){
+						
+						if(square[x-i][y-i].piece == e_p){
+							out.push_back(coord_to_notation(x-i,y-i));
+						}
+						else if(square[x-i][y-i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x-i][y-i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-i,y-i));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(x+i < 8 and y+i < 8){
+						
+						if(square[x+i][y+i].piece == e_p){
+							out.push_back(coord_to_notation(x+i,y+i));
+						}
+						else if(square[x+i][y+i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x+i][y+i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+i,y+i));
+							break;
+						}
+
+						i++;
+					}
+					i = 1;
+					while(y-i >= 0 and x+i < 8){
+						
+						if(square[x+i][y-i].piece == e_p){
+							out.push_back(coord_to_notation(x+i,y-i));
+						}
+						else if(square[x+i][y-i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x+i][y-i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x+i,y-i));
+							break;
+						}
+
+						i++;
+					}
+
+					i = 1;
+					while(y+i < 8 and x-i >= 0){
+						
+						if(square[x-i][y+i].piece == e_p){
+							out.push_back(coord_to_notation(x-i,y+i));
+						}
+						else if(square[x-i][y+i].colour == square[x][y].colour){
+							break;
+						}
+						else if(square[x-i][y+i].colour != square[x][y].colour){
+							out.push_back(coord_to_notation(x-i,y+i));
+							break;
+						}
+
+						i++;
+					}
+
+				};
 
 				break;
 
