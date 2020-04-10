@@ -3,7 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <fstream>
-
+#include <algorithm>
 
 //enum declare the pieces and colours
 enum Piece {k, q, r, n, b, p, e_p};
@@ -49,9 +49,25 @@ public:
 class board
 { 
 	Square square[8][8]; //instantiate 8x8 array of squares
-	int move_num = 0; //track move number to track whose turn it is
-	std::string pgn = "game pgn, will extend this to generate proper pgn  standard";
-	bool game_state = true; //game state false when finished, will add termination condition too, white win/black win/draw
+	int move_num     = 0; //track move number to track whose turn it is
+	int fifty_move_counter = 0;
+	std::string pgn  = "game pgn, will extend this to generate proper pgn  standard";
+	bool game_state  = true; //game state false when finished, will add termination condition too, white win/black win/draw
+	int result; //0, draw, 1, win for white, -1 win for black
+	bool white_check = false;
+	bool black_check = false;
+	bool en_passent  = false;
+	std::string white_king = "e1";
+	std::string black_king = "e8";
+	//vector of all possible moves to compare against the king for checks as well as enforcing only legal moves played
+	//remember that pawns moving forward do not capture
+	std::vector<std::string> white_take_moves;
+	std::vector<std::string> black_take_moves;  
+	std::vector<std::string> white_all_moves; //a list of all moves to check for stalemate condition, if empty it's a draw
+	std::vector<std::string> black_all_moves;
+
+	
+
 
 public:
 	void play(){
@@ -67,7 +83,7 @@ public:
 		std::cin >> player1;
 		std::cout<<"player 2:";
 		std::cin >> player2;
-
+		int move_test;
 		print_board();
 
 		while(game_state){
@@ -93,7 +109,11 @@ public:
 				//std::cout << std::endl;
 			}
 			if(mv.length() == 5){
-			move(v);
+			move_test = move(v);
+			if (move_test == -1){
+				std::cout<<"illegal move, try again"<<std::endl;
+				continue;
+			}
 			print_board();
 			if(move_num == 3){game_state=false;} //terminate the game after three moves, just for testing
 			}
@@ -224,7 +244,7 @@ public:
 	}
 
 
-	void move(std::vector<int> v){
+	int move(std::vector<int> v){
 		// so far this just moves a piece from one square to another
 		// need to add checks for legalaity, checks etc 
 
@@ -232,11 +252,106 @@ public:
 		//where those are the coordinates moving from and to in the actual array, not notation. 
 		Piece temp = square[v[1]][v[0]].piece;
 		Colour col = square[v[1]][v[0]].colour;
+		std::vector<std::string> poss_moves = square[v[1]][v[0]].possible_moves;
+
+		std::vector<std::string>::iterator it;
+		Colour old_colour = square[v[3]][v[2]].colour;
+
+ 		//first check if moves is allowed!
+		std::string test = coord_to_notation(v[3], v[2]);
+
+		//if the move is not found in the list of possible moves for that square return -1, not a legal move
+		it = std::find(poss_moves.begin(), poss_moves.end(), test); 
+
+		if(it == poss_moves.end() ){
+			return -1;
+		}
+
+
+		//don't clear here, because you might need it to compare if a king can move somewhere
+		//take_moves.clear(); //empty the set of all moves
 
 		square[v[1]][v[0]].set(e_p, e_c, v[1], v[0]);
 		square[v[3]][v[2]].set(temp, col, v[3], v[2]);
-		move_num++;
+		
+		if (temp == k){
+			switch(col){
+
+				case wh:
+					white_king = coord_to_notation(v[3], v[2]);
+				break;
+
+				case bl:
+					black_king = coord_to_notation(v[3], v[2]);
+					break;
+
+			}
+		}
+		//here we simply increment a counter if there are no checks or pawn moves
+		//50 moves without a check or pawn move and the game is a draw
+		//reset the counter if we get a check or pawn move
+		if(temp == p or (old_colour != col and old_colour != e_c) ){
+
+			fifty_move_counter = 0;
+		}
+		else{
+
+			++fifty_move_counter;
+		}
+		if(fifty_move_counter == 50){
+			result = 0;
+			game_state = false;
+		}
+
 		check_moves();
+
+
+
+		if(move_num%2 == 1){
+		//once we have a list of all possible captures then we have to check for checks
+		if(black_all_moves.size() == 0){
+			game_state = false;
+			result = 0;
+		}
+			
+		for(int i = 0; i <= black_take_moves.size(); ++i ){
+			if( black_take_moves[i] == white_king){
+				white_check = true;
+				break;
+			}
+			else{
+				white_check = false;
+			}
+			
+		}
+
+		}
+
+
+		if(move_num%2 == 0){
+		//once we have a list of all possible captures then we have to check for checks
+		if(white_all_moves.size() == 0){
+			game_state = false;
+			result = 0;
+		}
+			
+		for(int i = 0; i <= white_take_moves.size(); ++i ){
+			if( white_take_moves[i] == white_king){
+				black_check = true;
+				break;
+			}
+			else{
+				black_check = false;
+			}
+			
+		}
+
+		}
+
+
+
+		move_num++;
+		return 1;
 	}
 
 	std::vector<int> notation_to_coord(std::string move){
@@ -290,10 +405,13 @@ public:
 		//it is important for me to generate a list of all possible moves for the game engine I want to make later
 		//also this will be used to enforce legal moves are being made. 
 
-		//to-do: just make a little check valid move function, and loop over it, much cleaner. 
+		//to-do: just make a little check valid move function, and loop over it, much cleaner and easier to make changes to. 
+		//to-do: add check condition, check mate condition and enpassent condition.
+		//to-do: add castling, needs a king moved statement 
 		Piece pe = square[x][y].piece;
 		Colour col = square[x][y].colour;
 		std::vector<std::string> out;
+		std::vector<std::string> pawn_out;
 		switch(pe){
 
 				case e_p:
@@ -718,9 +836,11 @@ public:
 						}
 						if (square[x-1][y-1].colour == bl and x-1 >=0 and y-1 >=0){
 							out.push_back(coord_to_notation(x-1,y-1));
+							pawn_out.push_back(coord_to_notation(x-1,y-1));
 						}
 						if (square[x-1][y+1].colour == bl and x-1 >=0 and y+1 < 8){
 						out.push_back(coord_to_notation(x-1,y+1));
+						pawn_out.push_back(coord_to_notation(x-1,y+1));
 						}
 					break;
 					case bl:
@@ -733,19 +853,48 @@ public:
 						}
 						if (square[x+1][y-1].colour == wh and x+1 < 8 and y-1 >= 0){
 							out.push_back(coord_to_notation(x+1,y-1));
+							pawn_out.push_back(coord_to_notation(x+1,y-1));
 						}
 						if (square[x+1][y+1].colour == wh and x-1 >=0 and y+1 < 8){
 						out.push_back(coord_to_notation(x+1,y+1));
+						pawn_out.push_back(coord_to_notation(x+1,y+1));
 						}
 					break;
 				}
-
-				
-
 		};
 
 
 		square[x][y].possible_moves = out;
+		//basically here you want to clear all the moves whichever colour just moved and repopulate them with the update
+		switch(col){
+
+			case wh:
+			white_take_moves.clear();
+			white_all_moves.clear();
+			white_all_moves.insert(white_all_moves.end(), out.begin(), out.end()  );
+			//clear the moves here because we need to check where they king can go
+			if(pe != p){
+			white_take_moves.insert(white_take_moves.end(), out.begin(), out.end());
+			}
+			else{
+				white_take_moves.insert(white_take_moves.end(), pawn_out.begin(),pawn_out.end());
+			}
+			break;
+
+			case bl:
+			black_take_moves.clear();
+			black_all_moves.clear();
+			black_all_moves.insert(black_all_moves.end(), out.begin(), out.end()  );
+			//clear the moves here because we need to check where they king can go
+			if(pe != p){
+			black_take_moves.insert(black_take_moves.end(), out.begin(), out.end());
+			}
+			else{
+				black_take_moves.insert(black_take_moves.end(), pawn_out.begin(),pawn_out.end());
+			}
+			break;
+
+		}
 	};
 
 
