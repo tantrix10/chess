@@ -1,0 +1,1 @@
+game pgn, will extend this to generate proper pgn  standard0. e2-e4 1. e7-e5 

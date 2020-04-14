@@ -126,7 +126,7 @@ public:
 				continue;
 			}
 			print_board();
-			if(move_num == 3){game_state=false;} //terminate the game after three moves, just for testing
+			if(move_num == 15){game_state=false;} //terminate the game after three moves, just for testing
 			}
 		}
 
@@ -343,67 +343,97 @@ public:
 			++fifty_move_counter;
 		}
 		if(fifty_move_counter == 50){
+			std::cout<<"Draw by 50 move rule!"<<std::endl;
 			result = 0;
 			game_state = false;
 		}
+
+
+		/*to-do:
+
+		-clear and re-populate the moves of one colour
+		-then check if the other colour is in check
+		-then re-populate the possible moves of the next colour to move
+
+		*/
+		//clear out old moves and redfine possible moves.
+		white_take_moves.clear();
+		white_all_moves.clear();
+
+
+		black_take_moves.clear();
+		black_all_moves.clear();
 
 		check_moves();
 
 
-
-		if(move_num%2 == 1){
-		//once we have a list of all possible captures then we have to check for checks
-		if(black_all_moves.size() == 0 ){
-			game_state = false;
-			if (black_check == true){
-				result = 1; //if black has no moves and is in check, they loose
-			}
-			else{
-			result = 0;
-			}
-		}
-			
-		for(int i = 0; i <= black_take_moves.size(); ++i ){
-			if( black_take_moves[i] == white_king){
-				white_check = true;
-				break;
-			}
-			else{
-				white_check = false;
-			}
-			
-		}
-
-		}
-
-
+		//if white has just made a move and black now has none remaining, the game ends in some way.
+		//and visa versa
 		if(move_num%2 == 0){
 		//once we have a list of all possible captures then we have to check for checks
-		if(white_all_moves.size() == 0 ){
-			game_state = false;
-			if (white_check == true){
-					result = -1; //if white is in check and has no moves, black wins
+			if(black_all_moves.size() == 0 ){
+				game_state = false;
+				std::cout<<"Black has no more moves"<<std::endl;
+				if (black_check == true){
+					std::cout<<"white wins!"<<std::endl;
+					game_state = false;
+					result = 1; //if black has no moves and is in check, they loose
+				}
+
+				else{
+				result = 0;
 				}
 			}
-			result = 0;
-		
+			//if white has just moved and can take the black king, it's check
+			for(int i = 0; i <= white_take_moves.size(); ++i ){
+				if( white_take_moves[i] == black_king){
+					black_check = true;
+					std::cout<<"Check!"<<std::endl;
+					break;
+				}
+				else{
+					black_check = false;
+				}
+				
+			 }	
+
+
+		}
+
+
+		if(move_num%2 == 1){
+			//once we have a list of all possible captures then we have to check for checks
+			if(white_all_moves.size() == 0 ){
+				game_state = false;
+				std::cout<<"white has no more moves"<<std::endl;
+				if (white_check == true){
+						std::cout<<"Black Wins!"<<std::endl;
+						result = -1;
+						game_state = false;
+						 //if white is in check and has no moves, black wins
+					}
+				}
+				result = 0;
 			
-		for(int i = 0; i <= white_take_moves.size(); ++i ){
-			if( white_take_moves[i] == white_king){
-				black_check = true;
-				break;
+				for(int i = 0; i <= black_take_moves.size(); ++i ){
+				if( black_take_moves[i] == white_king){
+					white_check = true;
+					std::cout<<"Check!"<<std::endl;
+					break;
+				}
+				else{
+					white_check = false;
+				}
+				
 			}
-			else{
-				black_check = false;
-			}
+				
 			
-		 }
 
 		}
 
 
 
-		move_num++; 
+		++move_num; 
 		return 1;
 	}
 
@@ -918,12 +948,13 @@ public:
 
 
 		square[x][y].possible_moves = out;
-		//basically here you want to clear all the moves whichever colour just moved and repopulate them with the update
+		//the only piece that makes a capture move that is different to its regular movement is the pawn
+		//so strictly speaking the take moves are not only the take moves but also moves to empty squares
+		//it might be worth removing that incase I want to play with weighting those moves higher
 		switch(col){
 
 			case wh:
-			white_take_moves.clear();
-			white_all_moves.clear();
+
 			white_all_moves.insert(white_all_moves.end(), out.begin(), out.end()  );
 			//clear the moves here because we need to check where they king can go
 			if(pe != p){
@@ -935,8 +966,7 @@ public:
 			break;
 
 			case bl:
-			black_take_moves.clear();
-			black_all_moves.clear();
+
 			black_all_moves.insert(black_all_moves.end(), out.begin(), out.end()  );
 			//clear the moves here because we need to check where they king can go
 			if(pe != p){
