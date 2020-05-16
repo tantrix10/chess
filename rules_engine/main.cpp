@@ -506,7 +506,46 @@ public:
 				case k:
 				//need to add itterating over other possible moves to look for moving into checks
 				//also need to add a castling move (which means tracking if the king has moved)
-				out.push_back("king not yet programmed");
+				switch(col){
+					//first check if the king and rook haven't moved and the space inbetween is empty, then we can castle
+					case bl:
+						if (black_king_move  == false and black_king_rook_move == false
+							and square[0][6].piece == e_p and square[0][5].piece == e_p
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "f8") == 0 
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "g8") == 0
+							){
+							out.push_back("g8")
+						}
+						if (black_king_move  == false and black_queen_rook_move == false
+							and square[0][1].piece == e_p and square[0][2].piece == e_p and square[0][3].piece == e_p
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "d8") == 0 
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "c8") == 0
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "b8") == 0 
+							){
+							out.push_back("c8")
+						}
+
+					break;
+					case wh:
+						if (white_king_move  == false and white_king_rook_move == false
+							and square[7][6].piece == e_p and square[7][5].piece == e_p
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "f1") == 0 
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "g1") == 0
+							){
+							out.push_back("g1")
+						}
+						if (white_king_move  == false and white_queen_rook_move == false
+							and square[7][1].piece == e_p and square[7][2].piece == e_p and square[7][3].piece == e_p
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "d1") == 0 
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "c1") == 0
+							and std::count(white_take_moves.begin(), white_take_moves.end(), "b1") == 0 
+							){
+							out.push_back("c1")
+						}
+
+					break;
+				}
+				out.push_back("not all king moves programmed yet");
 
 				break;
 
