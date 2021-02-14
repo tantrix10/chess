@@ -1,4 +1,6 @@
-#[cfg(test)]
+// #[cfg(test)]
+
+use rules;
 
 #[test]
 fn it_works() {
