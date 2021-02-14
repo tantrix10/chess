@@ -508,6 +508,7 @@ public:
 				//also need to add a castling move (which means tracking if the king has moved)
 				switch(col){
 					//first check if the king and rook haven't moved and the space inbetween is empty, then we can castle
+					//still need to add other moves
 					case bl:
 						if (black_king_move  == false and black_king_rook_move == false
 							and square[0][6].piece == e_p and square[0][5].piece == e_p
