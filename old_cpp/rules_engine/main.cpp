@@ -446,7 +446,7 @@ public:
 
 		std::vector<int> out;
 		int x1 = move[0];
-		int y1 = move[1]- '0';//bit of a hacky way to convert char to int perhaps but works for now
+		int y1 = move[1]-'0';//bit of a hacky way to convert char to int perhaps but works for now
 
 		
 		out.push_back( -97 + x1  ); //string to int char going from a-h goes from 97-101
