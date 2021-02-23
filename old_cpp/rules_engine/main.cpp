@@ -102,10 +102,6 @@ public:
 			//currently allows any move to be made or checking legal moves of a square
 			//tracks whose move it is
 
-
-			
-
-
 			if(move_num % 2 ==0){colmove = "white";}
 			else{colmove = "black";}
 
