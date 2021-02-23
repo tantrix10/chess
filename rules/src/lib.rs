@@ -30,7 +30,7 @@ impl Square {
     }
 
     // I like getters and setters, sorry
-    pub fn move(&mut self, new_square:i8){
+    pub fn move_piece(&mut self, new_square:i8){
         self.square = new_square;
         self.possible_moves = vec![];
     }
