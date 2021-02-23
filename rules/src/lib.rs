@@ -16,7 +16,7 @@ struct Square {
     colour: Colour,
     square: i8,
     // this possible moves might change/move
-    possible_moves: Vec<(i8, i8)>,
+    possible_moves: Vec<i8>,
 }
 
 impl Square {
@@ -29,13 +29,15 @@ impl Square {
         }
     }
 
+    // I like getters and setters, sorry
     pub fn move(&mut self, new_square:i8){
         self.square = new_square;
         self.possible_moves = vec![];
     }
 
-    pub fn generate_moves(&mut self){
-        
+    pub fn update_moves(&mut self, moves: Vec<i8>){
+        self.possible_moves = moves;
+
     }
 }
 
