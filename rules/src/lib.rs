@@ -15,9 +15,28 @@ struct Square {
     piece: Piece,
     colour: Colour,
     square: i8,
-
     // this possible moves might change/move
-    possible_moves: (i8,i8),
+    possible_moves: Vec<(i8, i8)>,
+}
+
+impl Square {
+    pub fn new(piece: Piece, colour: Colour, square: i8) -> Square {
+        Square {
+            piece: piece,
+            colour: colour,
+            square: square,
+            possible_moves: vec![],
+        }
+    }
+
+    pub fn move(&mut self, new_square:i8){
+        self.square = new_square;
+        self.possible_moves = vec![];
+    }
+
+    pub fn generate_moves(&mut self){
+        
+    }
 }
 
 struct Board {
@@ -35,6 +54,15 @@ struct Board {
     check: bool,
     en_passent: bool,
     fifty_move_count: i8,
+    game_over: bool,
+    move_number: i32,
+    // A vector of vectors of dim , first square to second.
+    // this rep might change
+    move_list: Vec<Vec<i8>>,
+    black_moves: Vec<Vec<i8>>,
+    white_moves: Vec<Vec<i8>>,
+    black_capture_moves: Vec<Vec<i8>>,
+    white_capture_moves: Vec<Vec<i8>>,
 }
 
 pub fn adds_hopefully(x: i32, y: i32) -> i32 {
