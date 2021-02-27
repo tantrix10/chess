@@ -1,3 +1,5 @@
+
+#[derive(Clone)]
 enum Piece {
     King,
     Queen,
@@ -7,12 +9,14 @@ enum Piece {
     Pawn,
     Empty,
 }
+#[derive(Clone)]
 enum Colour {
     White,
     Black,
     Empty,
 }
 
+#[derive(Clone)]
 struct Square {
     piece: Piece,
     colour: Colour,
@@ -48,7 +52,7 @@ impl Square {
     // }
 }
 
-struct Board {
+pub struct Board {
     // Just re-implementing old cpp code for now
     
     // 8x8 vector of square structs, each containing the piece info
@@ -71,7 +75,7 @@ struct Board {
 
     // if en_passent is non-empty then this pawn can be taken en-passent
     // this may change tbh
-    en_passent: Square,
+    en_passent: (Square, bool),
 
     // moves to prevent castling
     // this isn't just true/false because of pieces being in the way
@@ -99,11 +103,44 @@ struct Board {
 }
 
 impl Board{
-    // pub fn new()-> Board{
-    //     Board{
-         
-    //     }
-    // }
+    pub fn new()-> Board{
+
+        let mut tmp: Vec<Square> = vec![];
+        let mut sqrs: Vec<Vec<Square>> = vec![];
+        
+        for _i in 0..8{ 
+            tmp = vec![];
+            for _j in 0..8{
+                tmp.push(Square::new())
+            }
+            sqrs.push(tmp.clone())
+        }
+        Board{
+            square: sqrs,
+            fifty_move_counter: 0,
+            game_state: true,
+            game_result: 2,
+            white_check: false,
+            black_check: false,
+            en_passent: (Square::new(), false),
+
+            white_king_move: false,
+            black_king_move: false,
+            white_king_rook_move: false,
+            white_queen_rook_move: false,
+            black_king_rook_move: false,
+            black_queen_rook_move: false,
+            white_king: String::from("e1"),
+            black_king: String::from("e8"),
+
+            white_take_moves: vec![],
+            black_take_moves: vec![],
+
+            white_all_moves: vec![],
+            black_all_moves: vec![],
+
+        }
+    }
 
     pub fn set(&mut self){
 
@@ -123,7 +160,7 @@ impl Board{
             }
         }
 
-        // set the non-pawn and empty peices 
+        // set the non-pawn and empty pieces 
         self.square[0][0].set(Piece::Rook   ,Colour::Black,0,0);
         self.square[0][1].set(Piece::Knight ,Colour::Black,0,1);
         self.square[0][2].set(Piece::Bishop ,Colour::Black,0,2);
@@ -142,7 +179,7 @@ impl Board{
         self.square[7][6].set(Piece::Knight ,Colour::White,7,6);
         self.square[7][7].set(Piece::Rook   ,Colour::White,7,7);
 
-        self.check_moves();
+        // self.check_moves();
     }
 
     pub fn check_moves(&mut self){
@@ -163,7 +200,7 @@ impl Board{
         // just dump out the board to terminal
         for i in 0..8{
             if i ==0{
-                println!("---------------------------------------------------------")
+                println!("---------------------------------")
             }
             for j in 0..8{
                 if j==0{
@@ -176,10 +213,12 @@ impl Board{
                     Piece::Bishop => print!(" B |"),
                     Piece::Knight => print!(" K |"),
                     Piece::Pawn => print!(" p |"),
-                    Piece::Empty => print!(" * |"),
+                    Piece::Empty => print!("   |"),
                 }
             }
-            println!("---------------------------------------------------------")
+            println!("");
+
+            println!("---------------------------------")
         }
     }
 }
