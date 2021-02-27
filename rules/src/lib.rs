@@ -49,32 +49,40 @@ impl Square {
 }
 
 struct Board {
-    // Piece, piece colour and square 0-63
-    // may wish to push this up from i8 is I want a huge board
+    // Just re-implementing old cpp code for now
+    
+    // 8x8 vector of square structs, each containing the piece info
+    square: vec![vec![Square; 8]; 8],
 
-    // Having a square struct too does allow for easy access to the pieces
-    // Having said that, I can just store legal moves in a smarter way
-    white_pieces: Vec<Square>,
-    black_pieces: Vec<Square>,
-    while_castle_king_side: bool,
-    black_castle_king_side: bool,
-    while_castle_queen_side: bool,
-    black_castle_queen_side: bool,
-    check: bool,
-    en_passent: bool,
-    fifty_move_count: i8,
-    game_over: bool,
-    move_number: i32,
-    // A vector of vectors of dim , first square to second.
-    // this rep might change
-    // These are on pieces themselves atm, but capture pieces remain 
-    // because it's easy to check checks etc
-    // Perhaps it should be just King captures?
-    // move_list: Vec<Vec<i8>>,
-    // black_moves: Vec<Vec<i8>>,
-    // white_moves: Vec<Vec<i8>>,
-    black_capture_moves: Vec<Vec<i8>>,
-    white_capture_moves: Vec<Vec<i8>>,
+    //fifty move counter for draws. Increments if no pawn move, check or
+    //capture. If fifty_move_counter== 50, the game is a draw
+    fifty_move_counter: i8,
+
+    // game state, if true game is not ended
+    game_state: bool,
+
+    // result +1 for white win, 0 for draw, -1 for black win
+    game_result: i8,
+
+    // bool for if a player is in check, not really needed but nice
+    // nice to display
+    white_check: bool,
+    black_check: bool,
+
+    // if en_passent is non-empty then this pawn can be taken en-passent
+    // this may change tbh
+    en_passent: Square,
+
+    // moves to prevent castling
+    // this isn't just true/false because of pieces being in the way
+    // /moving through a capture etc
+    white_king_move: bool,
+    black_king_move: bool,
+    white_king_rook_move: bool,
+    white_queen_rook_move: bool,
+    black_king_rook_move: bool,
+    black_queen_rook_move: bool,
+
 }
 
 impl Board{
@@ -85,7 +93,4 @@ impl Board{
     }
 }
 
-pub fn adds_hopefully(x: i32, y: i32) -> i32 {
-    // Making sure tests work!
-    x + y
-}
+
