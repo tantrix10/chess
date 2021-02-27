@@ -30,10 +30,10 @@ impl Square {
         }
     }
 
-    pub fn set(&self, piece: Piece, colour: Colour, square: Vec<i8>  ){
+    pub fn set(&mut self, piece: Piece, colour: Colour, x: i8, y: i8  ){
         self.piece = piece;
         self.colour = colour;
-        self.square = square;
+        self.square = vec![x,y];
     }
 
     // // I like getters and setters, sorry
@@ -52,7 +52,7 @@ struct Board {
     // Just re-implementing old cpp code for now
     
     // 8x8 vector of square structs, each containing the piece info
-    square: vec![vec![Square; 8]; 8],
+    square: Vec<Vec<Square> >,
 
     //fifty move counter for draws. Increments if no pawn move, check or
     //capture. If fifty_move_counter== 50, the game is a draw
@@ -83,12 +83,103 @@ struct Board {
     black_king_rook_move: bool,
     black_queen_rook_move: bool,
 
+    // King positions
+    white_king: String,
+    black_king: String,
+
+    // Vector of all capture moves to check for checks
+    white_take_moves: Vec<String>,
+    black_take_moves: Vec<String>,
+
+    // List of all moves for checking legality and 
+    // generating engine trees
+    white_all_moves: Vec<String>,
+    black_all_moves: Vec<String>,
+
 }
 
 impl Board{
-    pub fn new()-> Board{
-        Board{
+    // pub fn new()-> Board{
+    //     Board{
+         
+    //     }
+    // }
 
+    pub fn set(&mut self){
+
+        // set the pawns
+        for i in 0..8
+        {
+            self.square[6][i].set(Piece::Pawn, Colour::Black, 6, i as i8);
+            self.square[1][i].set(Piece::Pawn, Colour::White, 1, i as i8);
+        }
+
+        //set the empty squares
+        for i in 2..6
+        {
+            for j in 0..8
+            {
+                self.square[i][j].set(Piece::Empty, Colour::Empty, i as i8, j as i8);
+            }
+        }
+
+        // set the non-pawn and empty peices 
+        self.square[0][0].set(Piece::Rook   ,Colour::Black,0,0);
+        self.square[0][1].set(Piece::Knight ,Colour::Black,0,1);
+        self.square[0][2].set(Piece::Bishop ,Colour::Black,0,2);
+        self.square[0][3].set(Piece::Queen  ,Colour::Black,0,3);
+        self.square[0][4].set(Piece::King   ,Colour::Black,0,4);
+        self.square[0][5].set(Piece::Bishop ,Colour::Black,0,5);
+        self.square[0][6].set(Piece::Knight ,Colour::Black,0,6);
+        self.square[0][7].set(Piece::Rook   ,Colour::Black,0,7);
+
+        self.square[7][0].set(Piece::Rook   ,Colour::White,7,0);
+        self.square[7][1].set(Piece::Knight ,Colour::White,7,1);
+        self.square[7][2].set(Piece::Bishop ,Colour::White,7,2);
+        self.square[7][3].set(Piece::Queen  ,Colour::White,7,3);
+        self.square[7][4].set(Piece::Knight ,Colour::White,7,4);
+        self.square[7][5].set(Piece::Bishop ,Colour::White,7,5);
+        self.square[7][6].set(Piece::Knight ,Colour::White,7,6);
+        self.square[7][7].set(Piece::Rook   ,Colour::White,7,7);
+
+        self.check_moves();
+    }
+
+    pub fn check_moves(&mut self){
+        // This is dumb, but it works
+        for i in 0..8{
+            for j in 0..8{
+                self.valid_moves(i,j)
+            }
+        }
+
+    }
+
+    pub fn valid_moves(&mut self, x: usize, y: usize){
+
+    }
+
+    pub fn print_board(self){
+        // just dump out the board to terminal
+        for i in 0..8{
+            if i ==0{
+                println!("---------------------------------------------------------")
+            }
+            for j in 0..8{
+                if j==0{
+                    print!("|")
+                }
+                match self.square[i][j].piece{
+                    Piece::King => print!(" K |"),
+                    Piece::Queen => print!(" Q |"),
+                    Piece::Rook => print!(" R |"),
+                    Piece::Bishop => print!(" B |"),
+                    Piece::Knight => print!(" K |"),
+                    Piece::Pawn => print!(" p |"),
+                    Piece::Empty => print!(" * |"),
+                }
+            }
+            println!("---------------------------------------------------------")
         }
     }
 }
