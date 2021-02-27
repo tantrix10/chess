@@ -16,31 +16,36 @@ enum Colour {
 struct Square {
     piece: Piece,
     colour: Colour,
-    square: i8,
-    // this possible moves might change/move
+    square: Vec<i8>,
     possible_moves: Vec<i8>,
 }
 
 impl Square {
-    pub fn new(piece: Piece, colour: Colour, square: i8) -> Square {
+    pub fn new() -> Square {
         Square {
-            piece: piece,
-            colour: colour,
-            square: square,
+            piece: Piece::Empty,
+            colour: Colour::Empty,
+            square: vec![0,0],
             possible_moves: vec![],
         }
     }
 
-    // I like getters and setters, sorry
-    pub fn move_piece(&mut self, new_square:i8){
-        self.square = new_square;
-        self.possible_moves = vec![];
+    pub fn set(&self, piece: Piece, colour: Colour, square: Vec<i8>  ){
+        self.piece = piece;
+        self.colour = colour;
+        self.square = square;
     }
 
-    pub fn update_moves(&mut self, moves: Vec<i8>){
-        self.possible_moves = moves;
+    // // I like getters and setters, sorry
+    // pub fn move_piece(&mut self, new_square:i8){
+    //     self.square = new_square;
+    //     self.possible_moves = vec![];
+    // }
 
-    }
+    // pub fn update_moves(&mut self, moves: Vec<i8>){
+    //     self.possible_moves = moves;
+
+    // }
 }
 
 struct Board {
@@ -75,7 +80,7 @@ struct Board {
 impl Board{
     pub fn new()-> Board{
         Board{
-            
+
         }
     }
 }
