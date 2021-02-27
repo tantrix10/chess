@@ -5,10 +5,12 @@ enum Piece {
     Knight,
     Bishop,
     Pawn,
+    Empty,
 }
 enum Colour {
     White,
     Black,
+    Empty,
 }
 
 struct Square {
@@ -60,11 +62,22 @@ struct Board {
     move_number: i32,
     // A vector of vectors of dim , first square to second.
     // this rep might change
-    move_list: Vec<Vec<i8>>,
-    black_moves: Vec<Vec<i8>>,
-    white_moves: Vec<Vec<i8>>,
+    // These are on pieces themselves atm, but capture pieces remain 
+    // because it's easy to check checks etc
+    // Perhaps it should be just King captures?
+    // move_list: Vec<Vec<i8>>,
+    // black_moves: Vec<Vec<i8>>,
+    // white_moves: Vec<Vec<i8>>,
     black_capture_moves: Vec<Vec<i8>>,
     white_capture_moves: Vec<Vec<i8>>,
+}
+
+impl Board{
+    pub fn new()-> Board{
+        Board{
+            
+        }
+    }
 }
 
 pub fn adds_hopefully(x: i32, y: i32) -> i32 {
