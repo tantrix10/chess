@@ -1,5 +1,7 @@
 extern crate rules;
 
 fn main(){
-    board = rules::Board::new();
+    let mut board = rules::Board::new();
+    board.set();
+    board.print_board();
 }
