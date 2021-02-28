@@ -40,11 +40,10 @@ impl Square {
         self.square = vec![x,y];
     }
 
-    pub fn set_empty(&mut self, x:i8, y:i8) {
-           self.piece = Piece::Empty,
-           self.colour = Colour::Empty,
-           self.square = vec![x,y],
-           self.possible_moves = vec![],
+    pub fn set_empty(&mut self) {
+           self.piece = Piece::Empty;
+           self.colour = Colour::Empty;
+           self.possible_moves = vec![];
     }
 
     // // I like getters and setters, sorry
@@ -203,7 +202,7 @@ impl Board{
 
     }
 
-    pub fn print_board(self){
+    pub fn print_board(& self){
         // just dump out the board to terminal
         for i in 0..8{
             if i ==0{
@@ -229,7 +228,14 @@ impl Board{
         }
     }
 
-    pub fn make_move(&mut self, square_1: (i8,i8), square_2: (i8, i8)){
+    pub fn make_move(&mut self, square_1_pos: (usize,usize), square_2_pos: (usize,usize)){
+        let square_1: Square = self.square[square_1_pos.0][square_1_pos.1].clone();
+
+        self.square[square_2_pos.0][square_2_pos.1].piece = square_1.piece;
+        self.square[square_2_pos.0][square_2_pos.1].colour = square_1.colour;
+        self.square[square_2_pos.0][square_2_pos.1].possible_moves = vec![];
+
+        self.square[square_1_pos.0][square_1_pos.1].set_empty();
 
     }
 }
