@@ -5,17 +5,17 @@ that has been a bit slow/stale.
 
 Things to implement:
 
-- Piece enum
-- Colour enum
-- Square struct
-- Board struct
+- Piece enum, done
+- Colour enum, done
+- Square struct, done
+- Board struct, done
   - play game
     - 50 move rule
     - checkmate
     - stale mate
-  - new board func
-  - set up board
-  - print board
+  - new board func, done
+  - set up board, done
+  - print board, done
   - find possible moves
     - including:
       - checks
@@ -23,7 +23,7 @@ Things to implement:
       - castling
       - pawn promotion
   - print possible moves
-  - make a move
+  - make a move, done
     - only make a legal move
   - notation to coord
   - coord to notation
