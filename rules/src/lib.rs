@@ -21,7 +21,7 @@ struct Square {
     piece: Piece,
     colour: Colour,
     square: Vec<i8>,
-    possible_moves: Vec<i8>,
+    possible_moves: Vec<[i8;2]>,
 }
 
 impl Square {
@@ -29,6 +29,7 @@ impl Square {
         Square {
             piece: Piece::Empty,
             colour: Colour::Empty,
+            // this is a bit hacky, should be an array
             square: vec![0,0],
             possible_moves: vec![],
         }
@@ -76,8 +77,7 @@ pub struct Board {
 
     // bool for if a player is in check, not really needed but nice
     // nice to display
-    white_check: bool,
-    black_check: bool,
+    check: bool,
 
     // if en_passent is non-empty then this pawn can be taken en-passent
     // this may change tbh
@@ -98,13 +98,13 @@ pub struct Board {
     black_king: String,
 
     // Vector of all capture moves to check for checks
-    white_take_moves: Vec<String>,
-    black_take_moves: Vec<String>,
+    white_take_moves: Vec<[i8;2]>,
+    black_take_moves: Vec<[i8;2]>,
 
     // List of all moves for checking legality and 
     // generating engine trees
-    white_all_moves: Vec<String>,
-    black_all_moves: Vec<String>,
+    white_all_moves: Vec<[i8;2]>,
+    black_all_moves: Vec<[i8;2]>,
 
 }
 
@@ -126,8 +126,7 @@ impl Board{
             fifty_move_counter: 0,
             game_state: true,
             game_result: 2,
-            white_check: false,
-            black_check: false,
+            check: false,
             en_passent: (Square::new(), false),
 
             white_king_move: false,
@@ -199,6 +198,32 @@ impl Board{
     }
 
     pub fn valid_moves(&mut self, x: usize, y: usize){
+        let pe: Piece = self.square[x][y].piece;
+        let col: Colour = self.square[x][y].colour;
+        let mut out: Vec<[i8;2]> = vec![];
+        // For now I'm just adding the possible moves to the square
+        // let mut out: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_all_moves} else {self.black_all_moves};
+        // let mut out_take: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_take_moves} else {self.black_take_moves};
+        // Simply calculate all moves
+        // We'll deal with checks later
+        match pe{
+            Piece::King => {
+                // being disciplined and just copying
+                // this is real bad though, change it later
+                // so much copied code
+                match col{
+                    Colour::White =>{
+                        if (!white_king_move && !white_king_rook_move && match!(self.square[7][6], Piece::Empty) && match(self.square[7][5], Piece::Empty)){out.append([7,6])}
+                    }
+                }
+            },
+            Piece::Queen => {},
+            Piece::Rook => {},
+            Piece::Bishop => {},
+            Piece::Knight => {},
+            Piece::Pawn => {},
+            Piece::Empty => (),
+        }
 
     }
 
