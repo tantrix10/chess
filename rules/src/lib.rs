@@ -185,8 +185,11 @@ impl Board {
             fifty_move_counter: 0,
             game_state: true,
             game_result: 2,
-            check: false,
+            white_check: false,
+            black_check: false,
             en_passent: (Square::new(), false),
+            game_pgn: String::from("Game PGN:"),
+            move_num: 0,
 
             white_king_move: false,
             black_king_move: false,
