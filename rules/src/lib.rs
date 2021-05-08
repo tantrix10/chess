@@ -205,7 +205,6 @@ impl Board {
 
             white_all_moves: vec![],
             black_all_moves: vec![],
-
         }
     }
 
