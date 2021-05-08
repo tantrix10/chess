@@ -48,13 +48,15 @@ impl Square {
 
 pub struct Board {
     // Just re-implementing old cpp code for now
-    
     // 8x8 vector of square structs, each containing the piece info
-    square: Vec<Vec<Square> >,
+    square: [[Square; 8]; 8],
+    move_num: i32,
 
     //fifty move counter for draws. Increments if no pawn move, check or
     //capture. If fifty_move_counter== 50, the game is a draw
     fifty_move_counter: i8,
+
+    game_pgn: String,
 
     // game state, if true game is not ended
     game_state: bool,
@@ -64,7 +66,8 @@ pub struct Board {
 
     // bool for if a player is in check, not really needed but nice
     // nice to display
-    check: bool,
+    white_check: bool,
+    black_check: bool,
 
     // if en_passent is non-empty then this pawn can be taken en-passent
     // this may change tbh
