@@ -292,20 +292,19 @@ impl Board {
             Piece::Pawn => {}
             Piece::Empty => (),
         }
-
     }
 
-    pub fn print_board(& self){
+    pub fn print_board(&self) {
         // just dump out the board to terminal
-        for i in 0..8{
-            if i ==0{
+        for i in 0..8 {
+            if i == 0 {
                 println!("---------------------------------")
             }
-            for j in 0..8{
-                if j==0{
+            for j in 0..8 {
+                if j == 0 {
                     print!("|")
                 }
-                match self.square[i][j].piece{
+                match self.square[i][j].piece {
                     Piece::King => print!(" K |"),
                     Piece::Queen => print!(" Q |"),
                     Piece::Rook => print!(" R |"),
@@ -321,7 +320,7 @@ impl Board {
         }
     }
 
-    pub fn make_move(&mut self, square_1_pos: (usize,usize), square_2_pos: (usize,usize)){
+    pub fn make_move(&mut self, square_1_pos: (usize, usize), square_2_pos: (usize, usize)) {
         let square_1: Square = self.square[square_1_pos.0][square_1_pos.1].clone();
 
         self.square[square_2_pos.0][square_2_pos.1].piece = square_1.piece;
@@ -342,5 +341,3 @@ impl Board {
 
     }
 }
-
-
