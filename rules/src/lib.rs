@@ -19,8 +19,8 @@ enum Colour {
 struct Square {
     piece: Piece,
     colour: Colour,
-    square: Vec<i8>,
-    possible_moves: Vec<[i8;2]>,
+    square: [i8; 2],
+    possible_moves: Vec<String>,
 }
 
 impl Square {
@@ -28,34 +28,22 @@ impl Square {
         Square {
             piece: Piece::Empty,
             colour: Colour::Empty,
-            // this is a bit hacky, should be an array
-            square: vec![0,0],
+            square: [0, 0],
             possible_moves: vec![],
         }
     }
 
-    pub fn set(&mut self, piece: Piece, colour: Colour, x: i8, y: i8  ){
+    pub fn set(&mut self, piece: Piece, colour: Colour, x: i8, y: i8) {
         self.piece = piece;
         self.colour = colour;
-        self.square = vec![x,y];
+        self.square = [x, y];
     }
 
     pub fn set_empty(&mut self) {
-           self.piece = Piece::Empty;
-           self.colour = Colour::Empty;
-           self.possible_moves = vec![];
+        self.piece = Piece::Empty;
+        self.colour = Colour::Empty;
+        self.possible_moves = vec![];
     }
-
-    // // I like getters and setters, sorry
-    // pub fn move_piece(&mut self, new_square:i8){
-    //     self.square = new_square;
-    //     self.possible_moves = vec![];
-    // }
-
-    // pub fn update_moves(&mut self, moves: Vec<i8>){
-    //     self.possible_moves = moves;
-
-    // }
 }
 
 pub struct Board {
