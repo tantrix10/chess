@@ -209,20 +209,16 @@ impl Board {
         }
     }
 
-    pub fn set(&mut self){
-
+    pub fn set(&mut self) {
         // set the pawns
-        for i in 0..8
-        {
+        for i in 0..8 {
             self.square[6][i].set(Piece::Pawn, Colour::Black, 6, i as i8);
             self.square[1][i].set(Piece::Pawn, Colour::White, 1, i as i8);
         }
 
         //set the empty squares
-        for i in 2..6
-        {
-            for j in 0..8
-            {
+        for i in 2..6 {
+            for j in 0..8 {
                 self.square[i][j].set(Piece::Empty, Colour::Empty, i as i8, j as i8);
             }
         }
