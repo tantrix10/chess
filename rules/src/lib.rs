@@ -88,14 +88,13 @@ pub struct Board {
     black_king: String,
 
     // Vector of all capture moves to check for checks
-    white_take_moves: Vec<[i8;2]>,
-    black_take_moves: Vec<[i8;2]>,
+    white_take_moves: Vec<[String; 2]>,
+    black_take_moves: Vec<[String; 2]>,
 
-    // List of all moves for checking legality and 
+    // List of all moves for checking legality and
     // generating engine trees
-    white_all_moves: Vec<[i8;2]>,
-    black_all_moves: Vec<[i8;2]>,
-
+    white_all_moves: Vec<[String; 2]>,
+    black_all_moves: Vec<[String; 2]>,
 }
 
 impl Board{
