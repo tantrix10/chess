@@ -244,26 +244,25 @@ impl Board {
         // self.check_moves();
     }
 
-    pub fn check_moves(&mut self){
+    pub fn check_moves(&mut self) {
         // This is dumb, but it works
-        for i in 0..8{
-            for j in 0..8{
-                self.valid_moves(i,j)
+        for i in 0..8 {
+            for j in 0..8 {
+                self.valid_moves(i, j)
             }
         }
-
     }
 
-    pub fn valid_moves(&mut self, x: usize, y: usize){
+    pub fn valid_moves(&mut self, x: usize, y: usize) {
         let pe: Piece = self.square[x][y].piece;
         let col: Colour = self.square[x][y].colour;
-        let mut out: Vec<[i8;2]> = vec![];
+        let mut out = vec![];
         // For now I'm just adding the possible moves to the square
         // let mut out: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_all_moves} else {self.black_all_moves};
         // let mut out_take: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_take_moves} else {self.black_take_moves};
         // Simply calculate all moves
         // We'll deal with checks later
-        match pe{
+        match pe {
             Piece::King => {
                 // being disciplined and just copying
                 // this is real bad though, change it later
