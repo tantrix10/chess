@@ -1,5 +1,4 @@
-
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 enum Piece {
     King,
     Queen,
@@ -9,7 +8,7 @@ enum Piece {
     Pawn,
     Empty,
 }
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 enum Colour {
     White,
     Black,
