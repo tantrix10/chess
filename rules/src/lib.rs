@@ -268,17 +268,29 @@ impl Board {
                 // being disciplined and just copying
                 // this is real bad though, change it later
                 // so much copied code
-                match col{
-                    Colour::White =>{
-                        if (!white_king_move && !white_king_rook_move && match!(self.square[7][6], Piece::Empty) && match(self.square[7][5], Piece::Empty)){out.append([7,6])}
+                match col {
+                    Colour::White => {
+                        if !self.white_king_move
+                            && !self.white_king_rook_move
+                            && !matches!(self.square[7][6].piece, Piece::Empty)
+                            && matches!(self.square[7][5].piece, Piece::Empty)
+                        {
+                            out.push(String::from("test"))
+                        }
+                    },
+                    Colour::Black =>{
+                        out.push(String::from("test"));
+                    },
+                    Colour::Empty => {
+                        out.push(String::from("test"));
                     }
                 }
-            },
-            Piece::Queen => {},
-            Piece::Rook => {},
-            Piece::Bishop => {},
-            Piece::Knight => {},
-            Piece::Pawn => {},
+            }
+            Piece::Queen => {}
+            Piece::Rook => {}
+            Piece::Bishop => {}
+            Piece::Knight => {}
+            Piece::Pawn => {}
             Piece::Empty => (),
         }
 
