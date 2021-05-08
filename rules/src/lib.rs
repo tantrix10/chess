@@ -223,24 +223,24 @@ impl Board {
             }
         }
 
-        // set the non-pawn and empty pieces 
-        self.square[0][0].set(Piece::Rook   ,Colour::Black,0,0);
-        self.square[0][1].set(Piece::Knight ,Colour::Black,0,1);
-        self.square[0][2].set(Piece::Bishop ,Colour::Black,0,2);
-        self.square[0][3].set(Piece::Queen  ,Colour::Black,0,3);
-        self.square[0][4].set(Piece::King   ,Colour::Black,0,4);
-        self.square[0][5].set(Piece::Bishop ,Colour::Black,0,5);
-        self.square[0][6].set(Piece::Knight ,Colour::Black,0,6);
-        self.square[0][7].set(Piece::Rook   ,Colour::Black,0,7);
+        // set the non-pawn and empty pieces
+        self.square[0][0].set(Piece::Rook, Colour::Black, 0, 0);
+        self.square[0][1].set(Piece::Knight, Colour::Black, 0, 1);
+        self.square[0][2].set(Piece::Bishop, Colour::Black, 0, 2);
+        self.square[0][3].set(Piece::Queen, Colour::Black, 0, 3);
+        self.square[0][4].set(Piece::King, Colour::Black, 0, 4);
+        self.square[0][5].set(Piece::Bishop, Colour::Black, 0, 5);
+        self.square[0][6].set(Piece::Knight, Colour::Black, 0, 6);
+        self.square[0][7].set(Piece::Rook, Colour::Black, 0, 7);
 
-        self.square[7][0].set(Piece::Rook   ,Colour::White,7,0);
-        self.square[7][1].set(Piece::Knight ,Colour::White,7,1);
-        self.square[7][2].set(Piece::Bishop ,Colour::White,7,2);
-        self.square[7][3].set(Piece::Queen  ,Colour::White,7,3);
-        self.square[7][4].set(Piece::Knight ,Colour::White,7,4);
-        self.square[7][5].set(Piece::Bishop ,Colour::White,7,5);
-        self.square[7][6].set(Piece::Knight ,Colour::White,7,6);
-        self.square[7][7].set(Piece::Rook   ,Colour::White,7,7);
+        self.square[7][0].set(Piece::Rook, Colour::White, 7, 0);
+        self.square[7][1].set(Piece::Knight, Colour::White, 7, 1);
+        self.square[7][2].set(Piece::Bishop, Colour::White, 7, 2);
+        self.square[7][3].set(Piece::Queen, Colour::White, 7, 3);
+        self.square[7][4].set(Piece::Knight, Colour::White, 7, 4);
+        self.square[7][5].set(Piece::Bishop, Colour::White, 7, 5);
+        self.square[7][6].set(Piece::Knight, Colour::White, 7, 6);
+        self.square[7][7].set(Piece::Rook, Colour::White, 7, 7);
 
         // self.check_moves();
     }
