@@ -276,10 +276,10 @@ impl Board {
                         {
                             out.push(String::from("test"))
                         }
-                    },
-                    Colour::Black =>{
+                    }
+                    Colour::Black => {
                         out.push(String::from("test"));
-                    },
+                    }
                     Colour::Empty => {
                         out.push(String::from("test"));
                     }
@@ -330,14 +330,12 @@ impl Board {
         self.square[square_1_pos.0][square_1_pos.1].set_empty();
     }
 
-    pub fn notation_to_coord(str_move: String)->[u8;2]{
-
-        if str_move.chars().count() == 2{
+    pub fn notation_to_coord(str_move: String) -> [u8; 2] {
+        if str_move.chars().count() == 2 {
             let x1: u8 = 97 - str_move.as_bytes()[0];
             let y1: u8 = 49 - str_move.as_bytes()[1];
             return [x1, y1];
         }
-       return [9, 9]; 
-
+        return [9, 9];
     }
 }
