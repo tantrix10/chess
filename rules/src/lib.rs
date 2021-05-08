@@ -97,21 +97,91 @@ pub struct Board {
     black_all_moves: Vec<[String; 2]>,
 }
 
-impl Board{
-    pub fn new()-> Board{
-
-        let mut tmp: Vec<Square> = vec![];
-        let mut sqrs: Vec<Vec<Square>> = vec![];
-        
-        for _i in 0..8{ 
-            tmp = vec![];
-            for _j in 0..8{
-                tmp.push(Square::new())
-            }
-            sqrs.push(tmp.clone())
-        }
-        Board{
-            square: sqrs,
+impl Board {
+    pub fn new() -> Board {
+        Board {
+            square: [
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+                [
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                    Square::new(),
+                ],
+            ],
             fifty_move_counter: 0,
             game_state: true,
             game_result: 2,
