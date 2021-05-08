@@ -65,7 +65,7 @@ class board
 	bool white_king_rook_move  = false;
 	bool white_queen_rook_move = false;
 	bool black_king_rook_move  = false;
-	bool blac_queen_rook_move  = false;
+	bool black_queen_rook_move  = false;
 
 
 	std::string white_king = "e1";
@@ -440,15 +440,15 @@ public:
 		*/
 		if(move.length()==2){
 
-		std::vector<int> out;
-		int x1 = move[0];
-		int y1 = move[1]-'0';//bit of a hacky way to convert char to int perhaps but works for now
+			std::vector<int> out;
+			int x1 = move[0];
+			int y1 = move[1]-'0';//bit of a hacky way to convert char to int perhaps but works for now
 
-		
-		out.push_back( -97 + x1  ); //string to int char going from a-h goes from 97-101
-		out.push_back(  8  - y1  ); //just have to flip the coords as we count a1 on a chess board bottom left
+			
+			out.push_back( -97 + x1  ); //string to int char going from a-h goes from 97-101
+			out.push_back(  8  - y1  ); //just have to flip the coords as we count a1 on a chess board bottom left
 
-		return out;
+			return out;
 
 		}
 		
