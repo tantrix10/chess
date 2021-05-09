@@ -338,4 +338,15 @@ impl Board {
         }
         return [9, 9];
     }
+
+    pub fn coord_to_notation(coord: [u8;2]) -> String {
+        let comp = String::from("abcdefgh");
+        let letter = comp.as_bytes()[coord[1] as usize] as char;
+        let letter = letter.to_string();
+        let number = (8-coord[0]).to_string();
+        let mut out = String::new();
+        out += &letter;
+        out += &number;
+        out
+    }
 }
