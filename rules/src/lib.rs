@@ -25,6 +25,7 @@ pub enum GameResult {
     colour: Colour,
     square: [i8; 2],
     possible_moves: Vec<String>,
+    has_moved: bool,
 }
 
 impl Square {
