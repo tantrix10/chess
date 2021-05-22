@@ -249,37 +249,20 @@ impl Board {
         return !tmp_board.check;
     }
 
+    pub fn straight_moves(&mut self, x: usize, y: usize) {}
+
+    pub fn valid_moves(&mut self, x: usize, y: usize, check_king: bool) {
         let pe: Piece = self.square[x][y].piece;
         let col: Colour = self.square[x][y].colour;
         let mut out = vec![];
+        let mut out_all: Vec<[i8; 2]> = vec![];
         // For now I'm just adding the possible moves to the square
         // let mut out: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_all_moves} else {self.black_all_moves};
         // let mut out_take: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_take_moves} else {self.black_take_moves};
         // Simply calculate all moves
         // We'll deal with checks later
         match pe {
-            Piece::King => {
-                // being disciplined and just copying
-                // this is real bad though, change it later
-                // so much copied code
-                match col {
-                    Colour::White => {
-                        if !self.white_king_move
-                            && !self.white_king_rook_move
-                            && !matches!(self.square[7][6].piece, Piece::Empty)
-                            && matches!(self.square[7][5].piece, Piece::Empty)
-                        {
-                            out.push(String::from("test"))
-                        }
-                    }
-                    Colour::Black => {
-                        out.push(String::from("test"));
-                    }
-                    Colour::Empty => {
-                        out.push(String::from("test"));
-                    }
-                }
-            }
+            Piece::King => {}
             Piece::Queen => {}
             Piece::Rook => {}
             Piece::Bishop => {}
@@ -287,6 +270,7 @@ impl Board {
             Piece::Pawn => {}
             Piece::Empty => (),
         }
+        self.square[x][y].possible_moves = out;
     }
 
     pub fn print_board(&self) {
@@ -315,14 +299,25 @@ impl Board {
         }
     }
 
-    pub fn make_move(&mut self, square_1_pos: (usize, usize), square_2_pos: (usize, usize)) {
+    pub fn print_pos(&self, square_pos: (usize, usize)) {
+        let moves = &self.square[square_pos.0][square_pos.1].possible_moves;
+        for temp in moves.iter() {
+            println!("{}", temp);
+        }
+    }
+
+    pub fn make_move(&mut self, square_1_pos: (usize, usize), square_2_pos: (usize, usize))-> Result<(usize,usize), &str> {
         let square_1: Square = self.square[square_1_pos.0][square_1_pos.1].clone();
 
         self.square[square_2_pos.0][square_2_pos.1].piece = square_1.piece;
         self.square[square_2_pos.0][square_2_pos.1].colour = square_1.colour;
         self.square[square_2_pos.0][square_2_pos.1].possible_moves = vec![];
+        self.square[square_2_pos.0][square_2_pos.1].has_moved = true;
 
         self.square[square_1_pos.0][square_1_pos.1].set_empty();
+
+        self.move_num += 1;
+        Ok(square_2_pos)
     }
 
     pub fn notation_to_coord(str_move: String) -> [u8; 2] {
@@ -334,11 +329,11 @@ impl Board {
         return [9, 9];
     }
 
-    pub fn coord_to_notation(coord: [u8;2]) -> String {
+    pub fn coord_to_notation(coord: [u8; 2]) -> String {
         let comp = String::from("abcdefgh");
         let letter = comp.as_bytes()[coord[1] as usize] as char;
         let letter = letter.to_string();
-        let number = (8-coord[0]).to_string();
+        let number = (8 - coord[0]).to_string();
         let mut out = String::new();
         out += &letter;
         out += &number;
