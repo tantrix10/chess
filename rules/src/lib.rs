@@ -16,8 +16,12 @@ enum Colour {
 }
 
 #[derive(Clone)]
-struct Square {
-    piece: Piece,
+pub enum GameResult {
+    WhiteWin,
+    BlackWin,
+    Draw,
+    InProgress,
+}
     colour: Colour,
     square: [i8; 2],
     possible_moves: Vec<String>,
