@@ -39,6 +39,7 @@ impl Square {
             colour: Colour::Empty,
             square: [0, 0],
             possible_moves: vec![],
+            has_moved: false,
         }
     }
 
