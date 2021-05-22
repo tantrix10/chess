@@ -230,7 +230,25 @@ impl Board {
         }
     }
 
-    pub fn valid_moves(&mut self, x: usize, y: usize) {
+    pub fn switch_colour(&mut self) {
+        match self.move_colour {
+            Colour::White => self.move_colour = Colour::Black,
+            Colour::Black => self.move_colour = Colour::White,
+            Colour::Empty => (),
+        }
+    }
+
+    pub fn check_king_safe(
+        &mut self,
+        old_square: (usize, usize),
+        new_square: (usize, usize),
+    ) -> bool {
+        let mut tmp_board = self.clone();
+        tmp_board.make_move(old_square, new_square);
+        tmp_board.check_moves(false);
+        return !tmp_board.check;
+    }
+
         let pe: Piece = self.square[x][y].piece;
         let col: Colour = self.square[x][y].colour;
         let mut out = vec![];
