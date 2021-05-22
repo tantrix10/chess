@@ -219,11 +219,13 @@ impl Board {
         // self.check_moves();
     }
 
-    pub fn check_moves(&mut self) {
+    pub fn check_moves(&mut self, check_king: bool) {
         // This is dumb, but it works
         for i in 0..8 {
             for j in 0..8 {
-                self.valid_moves(i, j)
+                if self.square[i][j].colour == self.move_colour {
+                    self.valid_moves(i, j, check_king)
+                }
             }
         }
     }
