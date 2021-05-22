@@ -1,5 +1,5 @@
-#[derive(Clone, Copy)]
-enum Piece {
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Piece {
     King,
     Queen,
     Rook,
@@ -8,8 +8,8 @@ enum Piece {
     Pawn,
     Empty,
 }
-#[derive(Clone, Copy)]
-enum Colour {
+#[derive(Clone, Copy, PartialEq)]
+pub enum Colour {
     White,
     Black,
     Empty,
@@ -22,6 +22,10 @@ pub enum GameResult {
     Draw,
     InProgress,
 }
+
+#[derive(Clone)]
+pub struct Square {
+    pub piece: Piece,
     colour: Colour,
     square: [i8; 2],
     possible_moves: Vec<String>,
