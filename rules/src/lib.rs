@@ -172,28 +172,14 @@ impl Board {
                 ],
             ],
             fifty_move_counter: 0,
-            game_state: true,
-            game_result: 2,
-            white_check: false,
-            black_check: false,
+            move_colour: Colour::White,
+            game_result: GameResult::InProgress,
+            check: false,
             en_passent: (Square::new(), false),
-            game_pgn: String::from("Game PGN:"),
             move_num: 0,
-
-            white_king_move: false,
-            black_king_move: false,
-            white_king_rook_move: false,
-            white_queen_rook_move: false,
-            black_king_rook_move: false,
-            black_queen_rook_move: false,
-            white_king: String::from("e1"),
-            black_king: String::from("e8"),
-
-            white_take_moves: vec![],
-            black_take_moves: vec![],
-
-            white_all_moves: vec![],
-            black_all_moves: vec![],
+            white_king: [4, 7],
+            black_king: [4, 0],
+            moves: vec![],
         }
     }
 
