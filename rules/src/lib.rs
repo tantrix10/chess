@@ -56,55 +56,34 @@ impl Square {
     }
 }
 
+#[derive(Clone)]
 pub struct Board {
     // Just re-implementing old cpp code for now
     // 8x8 vector of square structs, each containing the piece info
-    square: [[Square; 8]; 8],
+    pub square: [[Square; 8]; 8],
     move_num: i32,
+    move_colour: Colour,
 
     //fifty move counter for draws. Increments if no pawn move, check or
     //capture. If fifty_move_counter== 50, the game is a draw
     fifty_move_counter: i8,
 
-    game_pgn: String,
-
-    // game state, if true game is not ended
-    game_state: bool,
-
-    // result +1 for white win, 0 for draw, -1 for black win
-    game_result: i8,
+    game_result: GameResult,
 
     // bool for if a player is in check, not really needed but nice
     // nice to display
-    white_check: bool,
-    black_check: bool,
+    check: bool,
 
     // if en_passent is non-empty then this pawn can be taken en-passent
     // this may change tbh
     en_passent: (Square, bool),
 
-    // moves to prevent castling
-    // this isn't just true/false because of pieces being in the way
-    // /moving through a capture etc
-    white_king_move: bool,
-    black_king_move: bool,
-    white_king_rook_move: bool,
-    white_queen_rook_move: bool,
-    black_king_rook_move: bool,
-    black_queen_rook_move: bool,
-
     // King positions
-    white_king: String,
-    black_king: String,
+    white_king: [i8; 2],
+    black_king: [i8; 2],
 
     // Vector of all capture moves to check for checks
-    white_take_moves: Vec<[String; 2]>,
-    black_take_moves: Vec<[String; 2]>,
-
-    // List of all moves for checking legality and
-    // generating engine trees
-    white_all_moves: Vec<[String; 2]>,
-    black_all_moves: Vec<[String; 2]>,
+    moves: Vec<[[i8; 2]; 2]>,
 }
 
 impl Board {
