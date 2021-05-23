@@ -243,13 +243,24 @@ impl Board {
         old_square: (usize, usize),
         new_square: (usize, usize),
     ) -> bool {
+        // This or implementing an undo move. 
+        // Undo will probably be fast, but this seems easier
         let mut tmp_board = self.clone();
         tmp_board.make_move(old_square, new_square);
         tmp_board.check_moves(false);
         return !tmp_board.check;
     }
 
-    pub fn straight_moves(&mut self, x: usize, y: usize) {}
+    pub fn straight_moves(&mut self, x: usize, y: usize) {
+        for dir in [(1,0),(0,1),(-1,0),(0,-1)].iter(){
+
+        }
+
+    }
+
+    pub fn standard_conditions_to_stop(){
+
+    }
 
     pub fn valid_moves(&mut self, x: usize, y: usize, check_king: bool) {
         let pe: Piece = self.square[x][y].piece;
@@ -306,7 +317,7 @@ impl Board {
         }
     }
 
-    pub fn make_move(&mut self, square_1_pos: (usize, usize), square_2_pos: (usize, usize))-> Result<(usize,usize), &str> {
+    pub fn make_move(&mut self, square_1_pos: (usize, usize), square_2_pos: (usize, usize)) {
         let square_1: Square = self.square[square_1_pos.0][square_1_pos.1].clone();
 
         self.square[square_2_pos.0][square_2_pos.1].piece = square_1.piece;
@@ -317,7 +328,6 @@ impl Board {
         self.square[square_1_pos.0][square_1_pos.1].set_empty();
 
         self.move_num += 1;
-        Ok(square_2_pos)
     }
 
     pub fn notation_to_coord(str_move: String) -> [u8; 2] {
