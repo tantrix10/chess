@@ -239,7 +239,7 @@ impl Board {
     }
 
     pub fn check_king_safe(
-        &mut self,
+        & self,
         old_square: (usize, usize),
         new_square: (usize, usize),
     ) -> bool {
@@ -253,12 +253,23 @@ impl Board {
 
     pub fn straight_moves(&mut self, x: usize, y: usize) {
         for dir in [(1,0),(0,1),(-1,0),(0,-1)].iter(){
+            let mut tmp_move = (x, y);
+            let mut keep_moving = true;
+            while keep_moving{
+                tmp_move += dir;
+            }
 
         }
 
     }
 
-    pub fn standard_conditions_to_stop(){
+    pub fn standard_conditions_to_stop(&self, old_square:(usize,usize), test_square: (usize,usize))->bool{
+        let x = test_square.0;
+        let y = test_square.1;
+        if self.square[x][y].colour == self.move_colour{
+            return false
+        }
+        return self.check_king_safe(old_square, test_square)
 
     }
 
