@@ -8,7 +8,7 @@ pub enum Piece {
     Pawn,
     Empty,
 }
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Colour {
     White,
     Black,
@@ -28,7 +28,7 @@ pub struct Square {
     pub piece: Piece,
     colour: Colour,
     square: [i8; 2],
-    possible_moves: Vec<String>,
+    possible_moves: Vec<[i8;2]>,
     has_moved: bool,
 }
 
@@ -81,9 +81,6 @@ pub struct Board {
     // King positions
     white_king: [i8; 2],
     black_king: [i8; 2],
-
-    // Vector of all capture moves to check for checks
-    moves: Vec<[[i8; 2]; 2]>,
 }
 
 impl Board {
@@ -179,7 +176,6 @@ impl Board {
             move_num: 0,
             white_king: [4, 7],
             black_king: [4, 0],
-            moves: vec![],
         }
     }
 
@@ -221,9 +217,15 @@ impl Board {
 
     pub fn check_moves(&mut self, check_king: bool) {
         // This is dumb, but it works
+        //let mut count = 0;
         for i in 0..8 {
             for j in 0..8 {
-                if self.square[i][j].colour == self.move_colour {
+                let tmp = self.move_colour;
+                //count += 1;
+                //println!("Count: {}", count);
+                //println!("{:?}", tmp);
+                if matches!(self.square[i][j].colour, tmp) {
+                    //println!("{} {}", i,j);
                     self.valid_moves(i, j, check_king)
                 }
             }
@@ -243,41 +245,81 @@ impl Board {
         old_square: (usize, usize),
         new_square: (usize, usize),
     ) -> bool {
-        // This or implementing an undo move. 
+        // This or implementing an undo move.
         // Undo will probably be fast, but this seems easier
         let mut tmp_board = self.clone();
         tmp_board.make_move(old_square, new_square);
-        tmp_board.check_moves(false);
+        // TODO: turn this back on when I only check depth one
+        // when its false
+        //tmp_board.check_moves(false);
         return !tmp_board.check;
     }
 
-    pub fn straight_moves(&mut self, x: usize, y: usize) {
-        for dir in [(1,0),(0,1),(-1,0),(0,-1)].iter(){
-            let mut tmp_move = (x, y);
-            let mut keep_moving = true;
-            while keep_moving{
-                tmp_move += dir;
-            }
-
+    pub fn standard_conditions_to_stop(&self, old_square:(i8,i8), test_square: (i8,i8))->bool{
+        let x = test_square.0;
+        let y = test_square.1;
+        if x > 7 || x < 0 || y > 7 || y < 0  {
+            return false
+        };
+        if self.square[x as usize][y as usize].colour == self.move_colour{
+            return false
+        }
+        else{
+            return self.check_king_safe(
+                (old_square.0 as usize, old_square.1 as usize),
+                (test_square.0 as usize, test_square.1 as usize)
+            )
         }
 
     }
 
-    pub fn standard_conditions_to_stop(&self, old_square:(usize,usize), test_square: (usize,usize))->bool{
-        let x = test_square.0;
-        let y = test_square.1;
-        if self.square[x][y].colour == self.move_colour{
-            return false
-        }
-        return self.check_king_safe(old_square, test_square)
 
+    pub fn diagonal_moves(&mut self, x: i8, y: i8)->Vec<[i8;2]> {
+        // TODO: bring diag and straight together
+        let mut out = vec![];
+        for dir in [(1,1),(-1,1),(-1,-1),(1,-1)].iter(){
+            let mut new_x: i8 = x.clone();
+            let mut new_y: i8 = y.clone();
+            let mut keep_moving = true;
+            while keep_moving{
+                new_x += dir.0;
+                new_y += dir.1;
+                keep_moving = self.standard_conditions_to_stop(
+                    (x ,y), (new_x, new_y)
+                    );
+                if keep_moving{
+                    out.push([new_x, new_y])
+                }
+            }
+        }
+        out
+    }
+
+
+    pub fn straight_moves(&mut self, x: i8, y: i8)->Vec<[i8;2]> {
+        let mut out = vec![];
+        for dir in [(1,0),(0,1),(-1,0),(0,-1)].iter(){
+            let mut new_x: i8 = x.clone();
+            let mut new_y: i8 = y.clone();
+            let mut keep_moving = true;
+            while keep_moving{
+                new_x += dir.0;
+                new_y += dir.1;
+                keep_moving = self.standard_conditions_to_stop(
+                    (x ,y), (new_x, new_y)
+                    );
+                if keep_moving{
+                    out.push([new_x, new_y])
+                }
+            }
+        }
+        out
     }
 
     pub fn valid_moves(&mut self, x: usize, y: usize, check_king: bool) {
         let pe: Piece = self.square[x][y].piece;
         let col: Colour = self.square[x][y].colour;
-        let mut out = vec![];
-        let mut out_all: Vec<[i8; 2]> = vec![];
+        let mut out: Vec<[i8;2]> = vec![];
         // For now I'm just adding the possible moves to the square
         // let mut out: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_all_moves} else {self.black_all_moves};
         // let mut out_take: Vec<[i8;2]> = if matches!(col,Colour::White) {self.white_take_moves} else {self.black_take_moves};
@@ -285,9 +327,12 @@ impl Board {
         // We'll deal with checks later
         match pe {
             Piece::King => {}
-            Piece::Queen => {}
-            Piece::Rook => {}
-            Piece::Bishop => {}
+            Piece::Queen => {
+                out.append(&mut self.straight_moves(x as i8,y as i8));
+                out.append(&mut self.diagonal_moves(x as i8, y as i8));
+            }
+            Piece::Rook => {out.append(&mut self.straight_moves(x as i8,y as i8))}
+            Piece::Bishop => {out.append(&mut self.diagonal_moves(x as i8, y as i8))}
             Piece::Knight => {}
             Piece::Pawn => {}
             Piece::Empty => (),
@@ -295,8 +340,9 @@ impl Board {
         self.square[x][y].possible_moves = out;
     }
 
-    pub fn print_board(&self) {
+    pub fn print_board(&self, possible_board: Option<[usize;2]>) {
         // just dump out the board to terminal
+        let possible = possible_board.unwrap_or([10,10]);
         for i in 0..8 {
             if i == 0 {
                 println!("---------------------------------")
@@ -312,19 +358,17 @@ impl Board {
                     Piece::Bishop => print!(" B |"),
                     Piece::Knight => print!(" K |"),
                     Piece::Pawn => print!(" p |"),
-                    Piece::Empty => print!("   |"),
+                    Piece::Empty =>
+                    if possible_board.is_some() && self.square[possible[0]][possible[1]].possible_moves.contains(&[i as i8,j as i8]){
+                        print!(" * |");
+                    }else{
+                        print!("   |")
+                    },
                 }
             }
             println!("");
 
             println!("---------------------------------")
-        }
-    }
-
-    pub fn print_pos(&self, square_pos: (usize, usize)) {
-        let moves = &self.square[square_pos.0][square_pos.1].possible_moves;
-        for temp in moves.iter() {
-            println!("{}", temp);
         }
     }
 
@@ -350,7 +394,7 @@ impl Board {
         return [9, 9];
     }
 
-    pub fn coord_to_notation(coord: [u8; 2]) -> String {
+    pub fn coord_to_notation(&self, coord: [i8; 2]) -> String {
         let comp = String::from("abcdefgh");
         let letter = comp.as_bytes()[coord[1] as usize] as char;
         let letter = letter.to_string();
@@ -360,4 +404,18 @@ impl Board {
         out += &number;
         out
     }
+
+    pub fn print_pos(&self, square_pos: (usize, usize)) {
+        let moves =  &self.square[square_pos.0][square_pos.1].possible_moves;
+        println!(
+            "Possible moves for {:?} on {:?}:",
+            self.square[square_pos.0][square_pos.1].piece,
+            self.coord_to_notation([square_pos.0 as i8, square_pos.1 as i8])
+        );
+        println!("{:?}", moves);
+        for temp in moves.iter() {
+            println!("{}", self.coord_to_notation(*temp))
+        }
+    }
+
 }
