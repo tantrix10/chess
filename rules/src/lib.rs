@@ -352,6 +352,8 @@ impl Board {
                     print!("|")
                 }
                 match self.square[i][j].piece {
+                    // make a print function so I can pass the possible_board
+                    // and make some nice colours!
                     Piece::King => print!(" K |"),
                     Piece::Queen => print!(" Q |"),
                     Piece::Rook => print!(" R |"),
