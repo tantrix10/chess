@@ -26,7 +26,7 @@ pub enum GameResult {
 #[derive(Clone)]
 pub struct Square {
     pub piece: Piece,
-    colour: Colour,
+    pub colour: Colour,
     square: [i8; 2],
     possible_moves: Vec<[i8;2]>,
     has_moved: bool,
@@ -72,7 +72,7 @@ pub struct Board {
 
     // bool for if a player is in check, not really needed but nice
     // nice to display
-    check: bool,
+    pub check: bool,
 
     // if en_passent is non-empty then this pawn can be taken en-passent
     // this may change tbh
@@ -182,8 +182,8 @@ impl Board {
     pub fn set(&mut self) {
         // set the pawns
         for i in 0..8 {
-            self.square[6][i].set(Piece::Pawn, Colour::Black, 6, i as i8);
-            self.square[1][i].set(Piece::Pawn, Colour::White, 1, i as i8);
+            self.square[1][i].set(Piece::Pawn, Colour::Black, 6, i as i8);
+            self.square[6][i].set(Piece::Pawn, Colour::White, 1, i as i8);
         }
 
         //set the empty squares
@@ -194,23 +194,23 @@ impl Board {
         }
 
         // set the non-pawn and empty pieces
-        self.square[0][0].set(Piece::Rook, Colour::Black, 0, 0);
+        self.square[0][0].set(Piece::Rook  , Colour::Black, 0, 0);
         self.square[0][1].set(Piece::Knight, Colour::Black, 0, 1);
         self.square[0][2].set(Piece::Bishop, Colour::Black, 0, 2);
-        self.square[0][3].set(Piece::Queen, Colour::Black, 0, 3);
-        self.square[0][4].set(Piece::King, Colour::Black, 0, 4);
+        self.square[0][3].set(Piece::Queen , Colour::Black, 0, 3);
+        self.square[0][4].set(Piece::King  , Colour::Black, 0, 4);
         self.square[0][5].set(Piece::Bishop, Colour::Black, 0, 5);
         self.square[0][6].set(Piece::Knight, Colour::Black, 0, 6);
-        self.square[0][7].set(Piece::Rook, Colour::Black, 0, 7);
+        self.square[0][7].set(Piece::Rook  , Colour::Black, 0, 7);
 
-        self.square[7][0].set(Piece::Rook, Colour::White, 7, 0);
+        self.square[7][0].set(Piece::Rook  , Colour::White, 7, 0);
         self.square[7][1].set(Piece::Knight, Colour::White, 7, 1);
         self.square[7][2].set(Piece::Bishop, Colour::White, 7, 2);
-        self.square[7][3].set(Piece::Queen, Colour::White, 7, 3);
-        self.square[7][4].set(Piece::Knight, Colour::White, 7, 4);
+        self.square[7][3].set(Piece::Queen , Colour::White, 7, 3);
+        self.square[7][4].set(Piece::King  , Colour::White, 7, 4);
         self.square[7][5].set(Piece::Bishop, Colour::White, 7, 5);
         self.square[7][6].set(Piece::Knight, Colour::White, 7, 6);
-        self.square[7][7].set(Piece::Rook, Colour::White, 7, 7);
+        self.square[7][7].set(Piece::Rook  , Colour::White, 7, 7);
 
         // self.check_moves();
     }
@@ -240,6 +240,14 @@ impl Board {
         }
     }
 
+    pub fn within_boundary(&self, x:i8, y:i8)-> bool{
+        if x > 7 || x < 0 || y > 7 || y < 0  {
+            return false
+        };
+        true
+
+    }
+
     pub fn check_king_safe(
         & self,
         old_square: (usize, usize),
@@ -252,23 +260,29 @@ impl Board {
         // TODO: turn this back on when I only check depth one
         // when its false
         //tmp_board.check_moves(false);
-        return !tmp_board.check;
+        //return !tmp_board.check;
+        return true
     }
 
     pub fn standard_conditions_to_stop(&self, old_square:(i8,i8), test_square: (i8,i8))->bool{
         let x = test_square.0;
         let y = test_square.1;
-        if x > 7 || x < 0 || y > 7 || y < 0  {
+        if !self.within_boundary(x,y){
             return false
-        };
-        if self.square[x as usize][y as usize].colour == self.move_colour{
+        }
+        // This check can just be on self.move_colour once that rule is in place.
+        if self.square[x as usize][y as usize].colour ==
+            self.square[old_square.0 as usize][old_square.1 as usize].colour{
             return false
         }
         else{
-            return self.check_king_safe(
-                (old_square.0 as usize, old_square.1 as usize),
-                (test_square.0 as usize, test_square.1 as usize)
-            )
+            // currently not implemented
+            // but this wil check to make sure this move makes the king safe
+            true
+            //return self.check_king_safe(
+            //    (old_square.0 as usize, old_square.1 as usize),
+            //    (test_square.0 as usize, test_square.1 as usize)
+            //)
         }
 
     }
@@ -288,13 +302,92 @@ impl Board {
                     (x ,y), (new_x, new_y)
                     );
                 if keep_moving{
-                    out.push([new_x, new_y])
+                    out.push([new_x, new_y]);
+                    if !matches!(self.square[new_x as usize][new_y as usize].colour, Colour::Empty){
+                        keep_moving = false;
+                        if matches!(self.square[new_x as usize][new_y as usize].piece, Piece::King){
+                            self.check = true;
+                        }
+                    }
                 }
             }
         }
         out
     }
 
+
+    pub fn knight_moves(&mut self, x: i8, y: i8)->Vec<[i8;2]> {
+        let mut out = vec![];
+        for dir in [(1,2),(1,-2),(-1,2),(-1,-2), (2,1),(2,-1),(-2,1),(-2,-1)].iter(){
+            let mut new_x: i8 = x.clone();
+            let mut new_y: i8 = y.clone();
+            new_x += dir.0;
+            new_y += dir.1;
+            let keep_moving = self.standard_conditions_to_stop(
+                (x ,y), (new_x, new_y)
+                );
+            if keep_moving{
+                out.push([new_x, new_y]);
+                if matches!(self.square[new_x as usize][new_y as usize].piece, Piece::King){
+                            self.check = true;
+                }
+            }
+        }
+        out
+    }
+
+
+    pub fn pawn_moves(&mut self, x:i8, y: i8)->Vec<[i8;2]>{
+        let mut out = vec![];
+        let col = self.square[x as usize][y as usize].colour;
+        let first_row = match col{
+            Colour::Black => 1,
+            Colour::White => 6,
+            Colour::Empty => -1,
+        };
+        let dir = match self.square[x as usize][y as usize].colour{
+            Colour::Black => 1,
+            Colour::White => -1,
+            Colour::Empty => 0,
+        };
+        let mut test_x = x + dir;
+        let test_y = y;
+        if matches!(self.square[test_x as usize][test_y as usize].colour, Colour::Empty)
+            &&  self.check_king_safe((x as usize, y as usize), (test_x as usize, test_y as usize) )
+                && self.within_boundary(x,y)
+
+        {
+            out.push([test_x,y]);
+            test_x += dir;
+            if x == first_row
+                && self.check_king_safe((x as usize, y as usize), (test_x as usize, test_y as usize) )
+                    && matches!(self.square[test_x as usize][test_y as usize].colour, Colour::Empty)
+                {
+                    out.push([test_x,y]);
+            }
+        }
+        println!("got this far {},{}", (x+dir),(y+1));
+        if self.within_boundary(x+dir,y+1){
+        println!("{:?}", self.square[(x+dir) as usize][(y+1) as usize].piece);
+        }
+        if self.within_boundary(x+dir, y+1)
+            && !matches!(self.square[(x+dir) as usize][(y+1) as usize].colour, Colour::Empty)
+                && self.square[(x+dir) as usize][(y+1) as usize].colour != col
+                    && self.check_king_safe((x as usize, y as usize), ((x+dir) as usize, (y+1) as usize) )
+        {
+        println!("got this far the other side");
+                out.push([x+dir, y+1])
+        }
+        if self.within_boundary(x+dir, y-1)
+            && !matches!(self.square[(x+dir) as usize][(y-1) as usize].colour, Colour::Empty)
+                && !matches!(self.square[(x+dir) as usize][(y-1) as usize].colour, col)
+                    && self.check_king_safe((x as usize, y as usize), ((x+dir) as usize, (y-1) as usize) )
+        {
+                out.push([x+dir, y-1])
+        }
+
+        out
+    }
 
     pub fn straight_moves(&mut self, x: i8, y: i8)->Vec<[i8;2]> {
         let mut out = vec![];
@@ -309,7 +402,13 @@ impl Board {
                     (x ,y), (new_x, new_y)
                     );
                 if keep_moving{
-                    out.push([new_x, new_y])
+                    out.push([new_x, new_y]);
+                    if !matches!(self.square[new_x as usize][new_y as usize].colour, Colour::Empty){
+                        keep_moving = false;
+                        if matches!(self.square[new_x as usize][new_y as usize].piece, Piece::King){
+                            self.check = true;
+                        }
+                    }
                 }
             }
         }
@@ -333,8 +432,8 @@ impl Board {
             }
             Piece::Rook => {out.append(&mut self.straight_moves(x as i8,y as i8))}
             Piece::Bishop => {out.append(&mut self.diagonal_moves(x as i8, y as i8))}
-            Piece::Knight => {}
-            Piece::Pawn => {}
+            Piece::Knight => {out.append(&mut self.knight_moves(x as i8, y as i8))}
+            Piece::Pawn => {out.append(&mut self.pawn_moves(x as i8, y as i8))}
             Piece::Empty => (),
         }
         self.square[x][y].possible_moves = out;
@@ -348,24 +447,35 @@ impl Board {
                 println!("---------------------------------")
             }
             for j in 0..8 {
-                if j == 0 {
-                    print!("|")
-                }
-                match self.square[i][j].piece {
-                    // make a print function so I can pass the possible_board
-                    // and make some nice colours!
-                    Piece::King => print!(" K |"),
-                    Piece::Queen => print!(" Q |"),
-                    Piece::Rook => print!(" R |"),
-                    Piece::Bishop => print!(" B |"),
-                    Piece::Knight => print!(" K |"),
-                    Piece::Pawn => print!(" p |"),
-                    Piece::Empty =>
-                    if possible_board.is_some() && self.square[possible[0]][possible[1]].possible_moves.contains(&[i as i8,j as i8]){
-                        print!(" * |");
-                    }else{
-                        print!("   |")
-                    },
+                if j == 0 { print!("|")}//else{print!("   |")};
+                if possible_board.is_some()
+                    && self.square[possible[0]][possible[1]]
+                        .possible_moves.contains(&[i as i8,j as i8])
+                {
+                    match self.square[i][j].piece {
+                        // make a print function so I can pass the possible_board
+                        // and make some nice colours!
+                        Piece::King => print!("*K*|"),
+                        Piece::Queen => print!("*Q*|"),
+                        Piece::Rook => print!("*R*|"),
+                        Piece::Bishop => print!("*B*|"),
+                        Piece::Knight => print!("*N*|"),
+                        Piece::Pawn => print!("*p*|"),
+                        Piece::Empty => print!(" * |"),
+                    }
+                }else{
+                    match self.square[i][j].piece {
+                        // make a print function so I can pass the possible_board
+                        // and make some nice colours!
+                        Piece::King => print!(" K |"),
+                        Piece::Queen => print!(" Q |"),
+                        Piece::Rook => print!(" R |"),
+                        Piece::Bishop => print!(" B |"),
+                        Piece::Knight => print!(" N |"),
+                        Piece::Pawn => print!(" p |"),
+                        Piece::Empty => print!("   |"),
+                    }
+
                 }
             }
             println!("");

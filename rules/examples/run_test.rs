@@ -31,5 +31,26 @@ fn main(){
     board.check_moves(true);
     board.print_pos((4 as usize,4 as usize));
     board.print_board(Some([4 as usize,4 as usize]));
+    println!("{}", board.check);
 
+
+
+
+    board.make_move((7,1), (4,4));
+    board.print_board(None);
+    board.check_moves(true);
+    board.print_pos((4 as usize,4 as usize));
+    board.print_board(Some([4 as usize,4 as usize]));
+    println!("{}", board.check);
+
+
+
+    board.make_move((0,0), (5,3));
+    board.print_pos((6 as usize, 2 as usize));
+    board.print_board(Some([6 as usize, 2 as usize]));
+    board.make_move((0,0), (5,1));
+    board.print_board(Some([5 as usize, 3 as usize]));
+    println!("{:?}",board.square[5 as usize][ 3 as usize].piece);
+    println!("{:?}",board.square[5 as usize][ 3 as usize].colour);
+    println!("{:?}",board.square[6 as usize][ 2 as usize].colour);
 }
